@@ -1,0 +1,25 @@
+ .then(res => res.json())
+    .then(resp => {
+
+        if (resp.status === "success") {
+
+            showToast(
+                editingPaletteId
+                    ? "Palette updated successfully!"
+                    : "Palette saved successfully!",
+                "success"
+            );
+
+            editingPaletteId = null;
+
+            setTimeout(() => location.reload(), 800);
+
+        } else {
+            showToast(resp.message, "danger");
+        }
+
+    })
+    .catch(err => {
+        console.error(err);
+        showToast("Something went wrong", "danger");
+    });

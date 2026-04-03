@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pricing - Gradient SaaS</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body{
+            background:#f8f9fa;
+        }
+
+        .pricing-card{
+            border:none;
+            border-radius:15px;
+            transition:0.3s;
+        }
+
+        .pricing-card:hover{
+            transform:translateY(-8px);
+            box-shadow:0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .pro{
+            border:2px solid #0d6efd;
+            transform:scale(1.05);
+        }
+
+        .price{
+            font-size:32px;
+            font-weight:bold;
+        }
+
+        .btn-upgrade{
+            border-radius:30px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container py-5">
+
+    <h1 class="text-center mb-3">Simple Pricing</h1>
+    <p class="text-center text-muted mb-5">
+        Choose a plan that fits your needs
+    </p>
+
+    <div class="row justify-content-center">
+
+        <!-- FREE -->
+        <div class="col-md-3">
+            <div class="card pricing-card p-4 text-center">
+
+                <h4>Free</h4>
+                <p class="price">$0</p>
+
+                <ul class="list-unstyled mt-3 mb-4">
+                    <li>✔ 5 Palettes</li>
+                    <li>✔ Linear Gradients</li>
+                    <li>❌ Radial Gradients</li>
+                    <li>❌ Export PNG</li>
+                </ul>
+
+                <button class="btn btn-outline-secondary w-100 btn-upgrade" disabled>
+                    Current Plan
+                </button>
+
+            </div>
+        </div>
+
+        <!-- PRO (Highlighted) -->
+        <div class="col-md-3">
+            <div class="card pricing-card pro p-4 text-center">
+
+                <h4>Pro 🚀</h4>
+                <p class="price">$5<span style="font-size:16px;">/mo</span></p>
+
+                <ul class="list-unstyled mt-3 mb-4">
+                    <li>✔ Unlimited Palettes</li>
+                    <li>✔ Radial Gradients</li>
+                    <li>✔ Export PNG & CSS</li>
+                    <li>✔ Future Features</li>
+                </ul>
+
+                <a href="/upgrade" class="btn btn-primary w-100 btn-upgrade">
+                    Upgrade Now
+                </a>
+
+            </div>
+        </div>
+
+        <!-- LIFETIME -->
+        <div class="col-md-3">
+            <div class="card pricing-card p-4 text-center">
+
+                <h4>Lifetime</h4>
+                <p class="price">$19</p>
+
+                <ul class="list-unstyled mt-3 mb-4">
+                    <li>✔ Everything in Pro</li>
+                    <li>✔ One-time payment</li>
+                    <li>✔ No subscription</li>
+                    <li>✔ Best Value</li>
+                </ul>
+
+                <a href="/upgrade" class="btn btn-dark w-100 btn-upgrade">
+                    Get Lifetime
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

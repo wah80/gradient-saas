@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Gradient API Documentation</title>
+
+<meta name="description"
+content="Use the Gradient API to fetch random CSS gradients for your applications.">
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<style>
+
+code{
+background:#f4f4f4;
+padding:4px 6px;
+border-radius:4px;
+}
+
+pre{
+background:#f4f4f4;
+padding:15px;
+border-radius:6px;
+}
+
+</style>
+
+</head>
+
+<body class="container py-5">
+
+<h1 class="mb-4">Gradient API</h1>
+
+<p>
+Use our free API to generate random CSS gradients for your applications.
+</p>
+
+<hr>
+
+<h3>Endpoint</h3>
+
+<code>GET /api/random-gradient</code>
+
+<p>Returns a random CSS gradient.</p>
+
+<hr>
+
+<h3>Example Request</h3>
+
+<pre>
+GET https://127.0.0.1/api/random-gradient
+</pre>
+
+<hr>
+
+<h3>Example Response</h3>
+
+<pre>{
+  "type": "linear",
+  "angle": 120,
+  "colors": ["#ff6a00","#ee0979"],
+  "css": "background: linear-gradient(120deg,#ff6a00,#ee0979);"
+}</pre>
+
+<hr>
+
+<h3>JavaScript Example</h3>
+
+<pre>
+fetch("/api/random-gradient")
+.then(res => res.json())
+.then(data => {
+    console.log(data.css);
+});
+</pre>
+
+<hr>
+
+<h3>Use Cases</h3>
+
+<ul>
+<li>Dynamic website backgrounds</li>
+<li>Design tools</li>
+<li>Code generators</li>
+<li>Creative projects</li>
+</ul>
+
+<hr>
+
+<a href="/random-gradient" class="btn btn-primary">
+Try Gradient Generator
+</a>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="text-center">
+    <h1 class="display-4 fw-bold">Create Beautiful Gradients</h1>
+    <p class="lead">Design, Save, and Export Gradients Online</p>
+
+    {% if not session.get('user_id') %}
+        <a href="/register" class="btn btn-primary btn-lg">Get Started</a>
+    {% else %}
+        <a href="/dashboard" class="btn btn-success btn-lg">Go to Dashboard</a>
+    {% endif %}
+</div>
+
+{% endblock %}

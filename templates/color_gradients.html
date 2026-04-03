@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>{{ color|capitalize }} CSS Gradients</title>
+
+<meta name="description"
+content="Browse beautiful {{ color }} CSS gradients. Copy gradient backgrounds instantly.">
+
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<style>
+
+.gradient-box{
+height:120px;
+border-radius:10px;
+transition:transform .2s;
+}
+
+.gradient-box:hover{
+transform:scale(1.05);
+}
+
+</style>
+
+</head>
+
+<body class="container py-5">
+<p>Total: {{ gradients|length }}</p>
+
+<h1 class="mb-4">
+{{ color|capitalize }} Gradients
+</h1>
+
+<div class="row">
+
+{% for g in gradients %}
+
+<div class="col-md-3 mb-4">
+
+<a href="/gradient/{{ g.slug }}" style="text-decoration:none">
+
+<div class="gradient-box"
+
+style="
+{% if g.gradient_type == 'linear' %}
+background: linear-gradient({{g.angle}}deg, {{ g.colors|join(',') }});
+{% else %}
+background: radial-gradient(circle, {{ g.colors|join(',') }});
+{% endif %}
+" >
+
+</div>
+
+<p class="mt-2 text-dark">{{ g.name }}</p>
+
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>

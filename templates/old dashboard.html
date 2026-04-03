@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+<h1>🎨 Unlimited Palette Generator </h1>
+
+
+<div id="colorInputs"></div>
+
+<button onclick="addColor()">➕ Add Color</button>
+<button onclick="reverseColors()">Reverse Gradient</button>
+<h3>Gradient Type</h3>
+<select id="gradientType" onchange="updateGradientType()">
+    <option value="linear">Linear</option>
+    <option value="radial">Radial</option>
+</select>
+
+<div id="radialOptions" style="display:none; margin-top:10px;">
+    <label>Shape:</label>
+    <select id="radialShape" onchange="generatePalette()">
+        <option value="circle">Circle</option>
+        <option value="ellipse">Ellipse</option>
+    </select>
+</div><br>
+<div id="radialCenterOptions">
+    <label>Center X:</label>
+    <input type="range" id="centerX" min="0" max="100" value="50">
+
+    <label>Center Y:</label>
+    <input type="range" id="centerY" min="0" max="100" value="50">
+</div>
+
+<h3>Gradient Angle</h3>
+
+<input type="range" id="angleSlider" min="0" max="360" value="45" >
+<span id="angleValue">45°</span>
+<div id="directionControls">
+    <button onclick="setDirection(0)">Top</button>
+    <button onclick="setDirection(90)">Right</button>
+    <button onclick="setDirection(180)">Bottom</button>
+    <button onclick="setDirection(270)">Left</button>
+</div>
+<br>
+<button onclick="savePalette()">Save Palette</button>
+<button onclick="generatePalette()">Generate</button>
+<button onclick="downloadCSS()">Download CSS</button>
+<button onclick="exportPNG()">Export PNG</button>
+<br><br>
+<input type="text" id="paletteName" placeholder="Palette Name">
+
+
+<h3>Gradient Preview</h3>
+<div id="gradientPreview" style="height:150px;border-radius:10px;"></div>
+<div id="presetGallery"></div>
+<h3>CSS Gradient Code</h3>
+<div style="background:#2a2a2a;padding:10px;border-radius:8px;">
+    <code id="cssCode"></code>
+    <br>
+    <button onclick="copyCSS()">Copy CSS</button>
+</div>
+
+<h3>Saved Palettes</h3>
+<div id="savedPalettes"></div>
+
+</div>
+{% endblock %}
+
+

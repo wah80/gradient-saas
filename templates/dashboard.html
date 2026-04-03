@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+
+
+
+<h1>🎨 Unlimited Palette Generator </h1>
+
+
+<div id="colorInputs"></div>
+
+<button class="btn btn-primary me-2" onclick="addColor()">➕ Add Color</button>
+<a href="/random-gradient">Random Gradient</a>
+<a href="/api-docs">API</a>
+<a href="/top-gradients" class="nav-link">Top 100 Gradients</a>
+<h3>Gradient Type</h3>
+<select id="gradientType">
+    <option value="linear">Linear</option>
+
+    {% if user_plan == "pro" %}
+        <option value="radial">Radial</option>
+    {% else %}
+        <option value="radial" >
+            Radial (Pro 🔒)
+        </option>
+    {% endif %}
+</select>
+<div id="radialOptions" style="display:none; margin-top:10px;">
+    <label>Shape:</label>
+    <select id="radialShape" onchange="generatePalette()">
+        <option value="circle">Circle</option>
+        <option value="ellipse">Ellipse</option>
+    </select>
+</div>
+<div id="radialCenterOptions" style="display:none; margin-top:10px;">
+    <label>Center X:</label>
+    <input type="range" id="centerX" min="0" max="100" value="50">
+
+    <label>Center Y:</label>
+    <input type="range" id="centerY" min="0" max="100" value="50">
+</div>
+
+<h3>Gradient Angle</h3>
+
+<input type="range" id="angleSlider" min="0" max="360" value="45" >
+<span id="angleValue">45°</span>
+
+<div id="directionControls">
+    <button class="btn btn-primary me-2" onclick="setDirection(0)">Top</button>
+    <button class="btn btn-primary me-2" onclick="setDirection(90)">Right</button>
+    <button class="btn btn-primary me-2" onclick="setDirection(180)">Bottom</button>
+    <button class="btn btn-primary me-2" onclick="setDirection(270)">Left</button>
+	</div>
+<br>
+<button class="btn btn-warning me-2" onclick="reverseColors()">Reverse Gradient</button>
+<button id="saveBtn" class="btn btn-primary" onclick="savePalette()">Save Palette</button>
+<button id="cancelEditBtn" onclick="cancelEdit()" class="btn btn-secondary" style="display:none;">Cancel Edit</button>
+<button class="btn btn-info me-2" onclick="downloadCSS()">Download CSS</button>
+<button class="btn btn-dark me-2" onclick="exportPNG()">Export PNG</button>
+
+<br><br>
+<div id="editStatus" class="text-warning fw-bold mb-2"></div>
+<input type="text" id="paletteName" placeholder="Palette Name">
+<label>
+<input type="checkbox" id="makePublic">
+Make this palette public
+</label>
+<div id="builderSection">
+<div class="card p-3 mb-3">
+    <h5>Gradient Preview</h5>
+    <div id="gradientPreview" style="height:150px;border-radius:10px;"></div>
+</div>
+</div>
+<div id="presetGallery"></div>
+<h3>CSS Gradient Code</h3>
+<div style="background:#2a2a2a;padding:10px;border-radius:8px;">
+    <code id="cssCode"></code>
+    <br>
+    <button onclick="copyCSS()">Copy CSS</button>
+</div>
+<br>
+
+{% if user_plan == "pro" %}
+<span class="badge bg-success">Pro User</span>
+<a href="/billing-portal" class="btn btn-outline-primary">
+    Manage Billing
+</a>
+{% else %}
+<span class="badge bg-secondary">Free User</span>
+{% endif %}
+<br>
+{% if payment_failed %}
+<div class="alert alert-danger">
+    ⚠️ Payment failed. Please update your billing info.
+    <a href="/billing-portal" class="btn btn-sm btn-light ms-2">
+        Fix Payment
+    </a>
+</div>
+{% endif %}
+<div class="card mb-3">
+  <div class="card-body">
+
+    <div class="d-flex justify-content-between mb-1">
+        <strong>Palette Usage</strong>
+        <span>
+            {{ palette_count }} / {{ palette_limit }}
+        </span>
+    </div>
+
+    <div class="progress" style="height:10px;">
+        <div 
+            class="progress-bar 
+			{% if palette_count >= palette_limit %}bg-danger
+			{% elif palette_count >= palette_limit-1 %}bg-warning
+			{% else %}bg-success
+			{% endif %}"
+            role="progressbar"
+            style="width: {{ (palette_count / palette_limit) * 100 }}%">
+        </div>
+    </div>
+
+    {% if user_plan == "free" %}
+    <div class="mt-2 text-end">
+        <a href="/create-checkout-session" class="btn btn-primary w-100">
+            Pro 🚀 (Most Popular)
+        </a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+
+
+
+
+<h3>Saved Palettes</h3>
+
+{% if palettes %}
+    {% for palette in palettes %}
+    <div class="card p-2 mb-2">
+        <strong>{{ palette[2] }}</strong>
+
+        <div class="palette">
+            {% for color in palette[8] %}
+                <div style="background: {{ color }}"></div>
+            {% endfor %}
+        </div>
+
+        <button class="btn btn-danger btn-sm"
+                onclick="deletePalette({{ palette[0] }})">
+            Delete
+        </button>
+
+        <button class="btn btn-info btn-sm"
+                onclick="editPalette({{ palette[0] }})">
+            Edit
+        </button>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No palettes saved yet.</p>
+{% endif %}
+
+{% if user_plan == "free" %}
+	<div class="alert alert-warning text-center">
+		“You’ve reached your limit (5 palettes).
+			Upgrade to Pro to unlock unlimited palettes + radial gradients.”
+		<a href="/create-checkout-session" class="btn btn-primary w-100">Upgrade to Pro</a>
+	</div>
+{% endif %}
+<!-- Upgrade Modal -->
+<div class="modal fade" id="upgradeModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg rounded-4">
+      
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold">Upgrade to Pro 🚀</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <p class="mb-3">
+          Unlock premium features and take your gradients to the next level.
+        </p>
+
+        <ul class="list-unstyled text-start px-4">
+          <li>✅ Radial Gradients</li>
+          <li>✅ Unlimited Palettes</li>
+          <li>✅ Future Premium Exports</li>
+        </ul>
+
+        <h4 class="mt-3">$5 / month</h4>
+      </div>
+
+      <div class="modal-footer border-0 justify-content-center">
+        <a href="/create-checkout-session" class="btn btn-primary w-100">
+				Upgrade Now
+			</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+<h4>Browse by Color</h4>
+
+<a href="/gradients/blue">Blue Gradients</a>
+<a href="/gradients/pink">Pink Gradients</a>
+<a href="/gradients/dark">Dark Gradients</a>
+<a href="/gradients/vibrant">Vibrant Gradients</a>
+
+<script>
+	const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+    const userPlan = "{{ user_plan }}";
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,72 @@
+body{
+    font-family: Arial;
+    background:#1e1e1e;
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
+
+#colorInputs{
+    margin-bottom:20px;
+}
+
+.color-input{
+    margin:5px;
+}
+
+.palette{
+    display:flex;
+    justify-content:center;
+    margin-top:10px;
+}
+
+.palette div{
+    width:50px;
+    height:50px;
+}
+
+.saved-box{
+    background:#2a2a2a;
+    padding:10px;
+    margin-top:10px;
+    border-radius:10px;
+}
+
+button{
+    padding:8px 15px;
+    margin:5px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+	background: linear-gradient(45deg, #1668c0,#2c5987,#536f8d,#99afc7);
+
+
+}
+#gradientPreview {
+    transition: opacity 0.25s ease-in-out;
+}
+
+.editing-mode {
+    border: 2px solid orange;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff8e1;
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.username {
+    color: #f56666;
+    font-weight: bold;	

@@ -1,0 +1,31 @@
+
+
+<h1>Free CSS Gradients</h1>
+<a href="/top-gradients" class="nav-link">
+Top 100 Gradients
+</a>
+<br><br>
+<div class="row">
+
+{% for g in gradients %}
+
+<div class="col-md-3">
+
+<a href="/gradient/{{ g.slug }}">
+
+
+<div class="gradient-box"
+style="background: linear-gradient({{g.angle}}deg, {{ g.colors|join(',') }}); height:120px; border-radius:10px;">
+</div>
+
+<p>{{ g.name }}</p>
+
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
