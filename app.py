@@ -1047,8 +1047,8 @@ def create_checkout_session():
             },
             'quantity': 1,
         }],
-        success_url=os.environ.get("DOMAIN") + "/success"
-        cancel_url=os.environ.get("DOMAIN") + "/pricing"
+        success_url=os.environ.get("DOMAIN") + "/success",
+        cancel_url=os.environ.get("DOMAIN") + "/pricing",
         metadata={"user_id": str(user_id)}
     )
 
