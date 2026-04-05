@@ -413,6 +413,13 @@ def dashboard():
     palette_limit=palette_limit
     )
     
+@app.route("/")
+def home():
+    if "user_id" in session:
+        return redirect("/dashboard")
+    return render_template("home.html")
+
+
 
 #Save Gradient route
 @app.route("/save-gradient", methods=["POST"])
