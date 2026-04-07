@@ -6,10 +6,51 @@
 <body>
 
 <h1>🎨 Gradient SaaS</h1>
+<h1>Create Beautiful CSS Gradients Instantly</h1>
+<p>Generate, copy and save stunning gradients for your projects.</p>
+
+<a href="/register" class="btn btn-dark">Get Started Free</a>
+<a href="/gradients" class="btn btn-outline-dark">Explore</a>
 
 <a href="/login">Login</a> |
-<a href="/register">Register</a> |
-<a href="/gradients">Explore Gradients</a>
+<div id="hero-gradient" style="height:200px; border-radius:10px;"></div>
+
+<h2>Why Gradient SaaS?</h2>
+
+<ul>
+<li>⚡ Instant gradient generator</li>
+<li>🎨 Save unlimited palettes</li>
+<li>📋 One-click CSS copy</li>
+<li>🔍 Search by color</li>
+</ul>
+
+<h2>Simple Pricing</h2>
+
+<div>
+<h3>Free</h3>
+<p>5 palettes</p>
+
+<h3>Pro</h3>
+<p>$5/month</p>
+</div>
+
+<a href="/pricing">View Pricing</a>
+
+<h2>Start creating gradients today</h2>
+<a href="/register" class="btn btn-dark">Get Started</a>
+
+<h2>Top CSS Gradients</h2>
+<p>Browse the best gradients for web design...</p>
+<p>Used by 100+ developers</p>
+
+
+<script>
+fetch("/api/random-gradient")
+.then(res => res.json())
+.then(data => {
+    document.getElementById("hero-gradient").style = data.css;
+});
+</script>
 
 </body>
 </html>
