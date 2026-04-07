@@ -1,50 +1,82 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gradient SaaS - Create Beautiful CSS Gradients</title>
+    <title>Gradient SaaS</title>
 
-    <meta name="description" content="Generate, copy and save beautiful CSS gradients instantly. Free & Pro tools available.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
     <style>
+
         body {
-            background: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #0f172a, #020617);
+            color: white;
+        }
+
+        .navbar {
+            backdrop-filter: blur(12px);
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin-top: 20px;
         }
 
         .hero {
-            padding: 80px 0;
+            padding: 100px 0;
             text-align: center;
         }
 
         .gradient-box {
-            height: 200px;
-            border-radius: 15px;
-            margin-top: 30px;
+            height: 220px;
+            border-radius: 20px;
+            margin-top: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            transition: transform 0.4s ease;
         }
 
-        .feature-box {
-            padding: 20px;
-            border-radius: 12px;
-            background: white;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        .gradient-box:hover {
+            transform: scale(1.05);
         }
 
-        .pricing-card {
-            border-radius: 15px;
-            padding: 30px;
-            background: white;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+        .glass {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(14px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
         .btn-main {
-            background: black;
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            border: none;
             color: white;
+            padding: 12px 28px;
+            border-radius: 999px;
+            transition: 0.3s;
         }
 
         .btn-main:hover {
-            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(236,72,153,0.4);
         }
+
+        .feature-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .pricing-card {
+            transition: 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+        }
+
     </style>
 </head>
 
@@ -52,51 +84,67 @@
 
 <div class="container">
 
-    <!-- 🔥 HERO -->
+    <!-- 🔥 NAVBAR -->
+    <div class="d-flex justify-content-between align-items-center p-3 navbar">
+        <h4>🎨 Gradient SaaS</h4>
+
+        <div>
+            <a href="/login" class="text-white me-3">Login</a>
+            <a href="/register" class="btn btn-main">Get Started</a>
+        </div>
+    </div>
+
+    <!-- 🚀 HERO -->
     <div class="hero">
-        <h1 class="display-5 fw-bold">
-            Create Stunning CSS Gradients Instantly
+
+        <h1 class="display-4 fw-bold">
+            Create Beautiful CSS Gradients
         </h1>
 
-        <p class="lead text-muted">
-            Generate, copy and save beautiful gradients for your projects.
+        <p class="text-light mt-3">
+            Generate, customize, and save stunning gradients in seconds.
         </p>
 
-        <a href="/register" class="btn btn-main btn-lg me-2">Get Started Free</a>
-        <a href="/gradients" class="btn btn-outline-dark btn-lg">Explore Gradients</a>
+        <div class="mt-4">
+            <a href="/register" class="btn btn-main me-2">Start Free</a>
+            <a href="/gradients" class="btn btn-outline-light">Explore</a>
+        </div>
 
-        <!-- 🎨 Live Gradient -->
         <div id="hero-gradient" class="gradient-box"></div>
+
     </div>
 
     <!-- 💎 FEATURES -->
     <div class="row text-center mb-5">
 
         <div class="col-md-4">
-            <div class="feature-box">
-                <h4>⚡ Instant Generator</h4>
-                <p>Create gradients in one click.</p>
+            <div class="glass">
+                <div class="feature-icon">⚡</div>
+                <h5>Instant Generator</h5>
+                <p>Create gradients in one click</p>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="feature-box">
-                <h4>🎨 Save Palettes</h4>
-                <p>Store your favorite gradients.</p>
+            <div class="glass">
+                <div class="feature-icon">🎨</div>
+                <h5>Save Palettes</h5>
+                <p>Store your favorites forever</p>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="feature-box">
-                <h4>📋 Copy CSS</h4>
-                <p>Copy ready-to-use CSS code instantly.</p>
+            <div class="glass">
+                <div class="feature-icon">📋</div>
+                <h5>Copy CSS</h5>
+                <p>Ready-to-use code instantly</p>
             </div>
         </div>
 
     </div>
 
     <!-- 🔥 GRADIENT SHOWCASE -->
-    <h2 class="text-center mb-4">Popular Gradients</h2>
+    <h2 class="text-center mb-4">Trending Gradients</h2>
 
     <div class="row">
 
@@ -115,7 +163,7 @@
                     ">
                 </div>
 
-                <p class="mt-2 text-dark text-center">{{ g.name }}</p>
+                <p class="text-center mt-2 text-white">{{ g.name }}</p>
 
             </a>
 
@@ -132,19 +180,19 @@
     <div class="row justify-content-center">
 
         <div class="col-md-4">
-            <div class="pricing-card text-center">
+            <div class="glass pricing-card text-center">
                 <h4>Free</h4>
                 <p class="display-6">$0</p>
                 <p>5 palettes</p>
-                <a href="/register" class="btn btn-outline-dark">Start Free</a>
+                <a href="/register" class="btn btn-outline-light">Start Free</a>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="pricing-card text-center border border-dark">
+            <div class="glass pricing-card text-center border border-light">
                 <h4>Pro</h4>
                 <p class="display-6">$5/mo</p>
-                <p>Unlimited palettes + Pro features</p>
+                <p>Unlimited gradients + Pro tools</p>
                 <a href="/pricing" class="btn btn-main">Upgrade</a>
             </div>
         </div>
@@ -153,8 +201,8 @@
 
     <!-- 🚀 CTA -->
     <div class="text-center my-5">
-        <h2>Start Creating Beautiful Gradients Today</h2>
-        <a href="/register" class="btn btn-main btn-lg mt-3">Get Started</a>
+        <h2>Start Creating Today 🚀</h2>
+        <a href="/register" class="btn btn-main mt-3">Get Started Free</a>
     </div>
 
     <!-- FOOTER -->
