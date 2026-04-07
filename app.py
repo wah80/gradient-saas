@@ -415,9 +415,34 @@ def dashboard():
     
 @app.route("/")
 def home():
-    if "user_id" in session:
-        return redirect("/dashboard")
-    return render_template("home.html")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT name, slug, gradient_type, angle, colors
+        FROM palettes
+        WHERE public=TRUE
+        ORDER BY id DESC
+        LIMIT 8
+    """)
+
+    rows = cursor.fetchall()
+
+    gradients = [
+        {
+            "name": r[0],
+            "slug": r[1],
+            "gradient_type": r[2],
+            "angle": r[3],
+            "colors": json.loads(r[4])
+        }
+        for r in rows
+    ]
+
+    conn.close()
+
+    return render_template("home.html", gradients=gradients)
 
 
 
