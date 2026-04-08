@@ -295,44 +295,7 @@ window.addEventListener("scroll", () => {
 });
 
 </script>
-<script>
 
-const preview = document.getElementById("preview");
-const color1 = document.getElementById("color1");
-const color2 = document.getElementById("color2");
-const angle = document.getElementById("angle");
-const angleVal = document.getElementById("angleVal");
-const cssOutput = document.getElementById("cssOutput");
-
-function updateGradient(){
-
-    const c1 = color1.value;
-    const c2 = color2.value;
-    const ang = angle.value;
-
-    const gradient = `linear-gradient(${ang}deg, ${c1}, ${c2})`;
-
-    preview.style.background = gradient;
-    cssOutput.value = `background: ${gradient};`;
-
-    angleVal.innerText = ang;
-}
-
-color1.addEventListener("input", updateGradient);
-color2.addEventListener("input", updateGradient);
-angle.addEventListener("input", updateGradient);
-
-// COPY FUNCTION
-function copyCSS(){
-    cssOutput.select();
-    document.execCommand("copy");
-    alert("Copied!");
-}
-
-// INIT
-updateGradient();
-
-</script>
 <script>
 
 let colors = ["#6366f1", "#ec4899"];
