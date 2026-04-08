@@ -110,6 +110,15 @@ body{
     opacity:1;
     transform:translateY(0);
 }
+.builder-card{
+    background:#ffffff;
+    border-radius:16px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.08);
+}
+
+.gradient-preview{
+    transition: all .3s ease;
+}
 
 </style>
 
@@ -131,51 +140,82 @@ body{
     </div>
 </div>
 
-<!-- HERO -->
+<!-- HERO WITH LIVE BUILDER -->
 <div class="container hero">
 
     <div class="row align-items-center">
 
         <!-- TEXT -->
-        <div class="col-md-6 fade-up">
+        <div class="col-md-5">
 
             <h1>
-                Design gradients  
-                <br> faster than ever
+                Build gradients  
+                <br> in real-time
             </h1>
 
             <p>
-                Create, save, and export beautiful CSS gradients  
-                in seconds — built for developers & designers.
+                Create, preview, and copy CSS gradients instantly.
             </p>
 
-            <div class="mt-4">
-                <a href="/dashboard" class="btn btn-primary-custom me-2">
-                    Start for free
-                </a>
-
-                <a href="/gradients" class="btn btn-outline">
-                    Explore gradients
-                </a>
-            </div>
+            <a href="/dashboard" class="btn btn-primary-custom mt-3">
+                Save your gradients
+            </a>
 
         </div>
 
-        <!-- PRODUCT PREVIEW -->
-        <div class="col-md-6 fade-up">
+        <!-- LIVE BUILDER -->
+        <div class="col-md-7">
 
-            <div class="preview-box">
+            <div class="builder-card p-4">
 
-                <div class="gradient-preview mb-3"
-                     style="background: linear-gradient(135deg,#6366f1,#ec4899);">
+                <!-- PREVIEW -->
+                <div id="preview"
+                     class="gradient-preview mb-4"
+                     style="height:220px; border-radius:12px;">
                 </div>
 
-                <div class="gradient-preview mb-3"
-                     style="background: linear-gradient(135deg,#06b6d4,#3b82f6);">
+                <!-- CONTROLS -->
+                <div class="row">
+
+                    <div class="col-6">
+                        <label>Color 1</label>
+                        <input type="color" id="color1" value="#6366f1" class="form-control form-control-color">
+                    </div>
+
+                    <div class="col-6">
+                        <label>Color 2</label>
+                        <input type="color" id="color2" value="#ec4899" class="form-control form-control-color">
+                    </div>
+
                 </div>
 
-                <div class="gradient-preview"
-                     style="background: linear-gradient(135deg,#f59e0b,#ef4444);">
+                <!-- ANGLE -->
+                <div class="mt-3">
+                    <label>Angle: <span id="angleVal">135</span>°</label>
+                    <input type="range" id="angle" min="0" max="360" value="135" class="form-range">
+                </div>
+
+                <!-- CSS OUTPUT -->
+                <div class="mt-3">
+
+                    <textarea id="cssOutput"
+                              class="form-control"
+                              rows="2"
+                              readonly></textarea>
+
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="mt-3 d-flex justify-content-between">
+
+                    <button onclick="copyCSS()" class="btn btn-dark">
+                        Copy CSS
+                    </button>
+
+                    <a href="/dashboard" class="btn btn-primary-custom">
+                        Save Gradient
+                    </a>
+
                 </div>
 
             </div>
@@ -248,7 +288,44 @@ window.addEventListener("scroll", () => {
 });
 
 </script>
+<script>
 
+const preview = document.getElementById("preview");
+const color1 = document.getElementById("color1");
+const color2 = document.getElementById("color2");
+const angle = document.getElementById("angle");
+const angleVal = document.getElementById("angleVal");
+const cssOutput = document.getElementById("cssOutput");
+
+function updateGradient(){
+
+    const c1 = color1.value;
+    const c2 = color2.value;
+    const ang = angle.value;
+
+    const gradient = `linear-gradient(${ang}deg, ${c1}, ${c2})`;
+
+    preview.style.background = gradient;
+    cssOutput.value = `background: ${gradient};`;
+
+    angleVal.innerText = ang;
+}
+
+color1.addEventListener("input", updateGradient);
+color2.addEventListener("input", updateGradient);
+angle.addEventListener("input", updateGradient);
+
+// COPY FUNCTION
+function copyCSS(){
+    cssOutput.select();
+    document.execCommand("copy");
+    alert("Copied!");
+}
+
+// INIT
+updateGradient();
+
+</script>
 </body>
 </html>
 
