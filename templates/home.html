@@ -74,6 +74,7 @@ body{
 .gradient-preview{
     height:200px;
     border-radius:10px;
+	transition: all .3s ease;
 }
 
 /* FEATURES */
@@ -110,14 +111,31 @@ body{
     opacity:1;
     transform:translateY(0);
 }
+
 .builder-card{
-    background:#ffffff;
+    background:#fff;
     border-radius:16px;
     box-shadow:0 20px 40px rgba(0,0,0,0.08);
+    overflow:hidden;
 }
 
-.gradient-preview{
-    transition: all .3s ease;
+/* 🔒 Overlay */
+.pro-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.9);
+    backdrop-filter:blur(6px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:10;
+}
+
+/* COLOR ROW */
+.color-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
 }
 
 </style>
@@ -163,63 +181,52 @@ body{
 
         </div>
 
-        <!-- LIVE BUILDER -->
-        <div class="col-md-7">
+        <div class="builder-card p-4 position-relative">
 
-            <div class="builder-card p-4">
+    <!-- 🔒 PRO OVERLAY -->
+    <div id="proOverlay" class="pro-overlay d-none">
+        <div class="text-center">
+            <h5>🔒 Pro Feature</h5>
+            <p>Unlock radial & multi-color gradients</p>
+            <a href="/pricing" class="btn btn-primary-custom">Upgrade</a>
+        </div>
+    </div>
 
-                <!-- PREVIEW -->
-                <div id="preview"
-                     class="gradient-preview mb-4"
-                     style="height:220px; border-radius:12px;">
-                </div>
+    <!-- PREVIEW -->
+    <div id="preview" class="gradient-preview mb-4"></div>
 
-                <!-- CONTROLS -->
-                <div class="row">
+    <!-- TYPE TOGGLE -->
+    <div class="mb-3">
+        <label>Type</label>
+        <select id="type" class="form-select">
+            <option value="linear">Linear</option>
+            <option value="radial">Radial (Pro)</option>
+        </select>
+    </div>
 
-                    <div class="col-6">
-                        <label>Color 1</label>
-                        <input type="color" id="color1" value="#6366f1" class="form-control form-control-color">
-                    </div>
+    <!-- COLORS -->
+    <div id="colorsContainer"></div>
 
-                    <div class="col-6">
-                        <label>Color 2</label>
-                        <input type="color" id="color2" value="#ec4899" class="form-control form-control-color">
-                    </div>
+    <button onclick="addColor()" class="btn btn-outline-secondary mt-2">
+        + Add Color
+    </button>
 
-                </div>
+    <!-- ANGLE -->
+    <div class="mt-3" id="angleWrapper">
+        <label>Angle: <span id="angleVal">135</span>°</label>
+        <input type="range" id="angle" min="0" max="360" value="135" class="form-range">
+    </div>
 
-                <!-- ANGLE -->
-                <div class="mt-3">
-                    <label>Angle: <span id="angleVal">135</span>°</label>
-                    <input type="range" id="angle" min="0" max="360" value="135" class="form-range">
-                </div>
+    <!-- CSS -->
+    <textarea id="cssOutput" class="form-control mt-3" rows="2" readonly></textarea>
 
-                <!-- CSS OUTPUT -->
-                <div class="mt-3">
+    <!-- ACTIONS -->
+    <div class="mt-3 d-flex justify-content-between">
+        <button onclick="copyCSS()" class="btn btn-dark">Copy</button>
+        <a href="/dashboard" class="btn btn-primary-custom">Save</a>
+    </div>
 
-                    <textarea id="cssOutput"
-                              class="form-control"
-                              rows="2"
-                              readonly></textarea>
-
-                </div>
-
-                <!-- ACTIONS -->
-                <div class="mt-3 d-flex justify-content-between">
-
-                    <button onclick="copyCSS()" class="btn btn-dark">
-                        Copy CSS
-                    </button>
-
-                    <a href="/dashboard" class="btn btn-primary-custom">
-                        Save Gradient
-                    </a>
-
-                </div>
-
-            </div>
-
+</div>
         </div>
 
     </div>
@@ -323,6 +330,106 @@ function copyCSS(){
 }
 
 // INIT
+updateGradient();
+
+</script>
+<script>
+
+let colors = ["#6366f1", "#ec4899"];
+let isPro = false; // 🔥 toggle later from backend
+
+const container = document.getElementById("colorsContainer");
+const preview = document.getElementById("preview");
+const cssOutput = document.getElementById("cssOutput");
+const angle = document.getElementById("angle");
+const angleVal = document.getElementById("angleVal");
+const type = document.getElementById("type");
+const overlay = document.getElementById("proOverlay");
+const angleWrapper = document.getElementById("angleWrapper");
+
+/* RENDER COLORS */
+function renderColors(){
+    container.innerHTML = "";
+
+    colors.forEach((color, index) => {
+
+        const row = document.createElement("div");
+        row.className = "color-row";
+
+        row.innerHTML = `
+            <input type="color" value="${color}" 
+                   onchange="updateColor(${index}, this.value)">
+            <button onclick="removeColor(${index})" class="btn btn-sm btn-danger">×</button>
+        `;
+
+        container.appendChild(row);
+    });
+}
+
+/* ADD COLOR */
+function addColor(){
+    if(!isPro && colors.length >= 2){
+        overlay.classList.remove("d-none");
+        return;
+    }
+
+    colors.push("#000000");
+    renderColors();
+    updateGradient();
+}
+
+/* REMOVE */
+function removeColor(index){
+    colors.splice(index,1);
+    renderColors();
+    updateGradient();
+}
+
+/* UPDATE COLOR */
+function updateColor(index, value){
+    colors[index] = value;
+    updateGradient();
+}
+
+/* MAIN LOGIC */
+function updateGradient(){
+
+    let gradient;
+
+    if(type.value === "linear"){
+        gradient = `linear-gradient(${angle.value}deg, ${colors.join(",")})`;
+        angleWrapper.style.display = "block";
+    } else {
+
+        if(!isPro){
+            overlay.classList.remove("d-none");
+            type.value = "linear";
+            return;
+        }
+
+        gradient = `radial-gradient(circle, ${colors.join(",")})`;
+        angleWrapper.style.display = "none";
+    }
+
+    preview.style.background = gradient;
+    cssOutput.value = `background: ${gradient};`;
+
+    angleVal.innerText = angle.value;
+}
+
+/* COPY */
+function copyCSS(){
+    cssOutput.select();
+    document.execCommand("copy");
+    alert("Copied!");
+}
+
+/* EVENTS */
+angle.addEventListener("input", updateGradient);
+type.addEventListener("change", updateGradient);
+
+/* INIT */
+renderColors();
 updateGradient();
 
 </script>
