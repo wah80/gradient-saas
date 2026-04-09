@@ -442,7 +442,7 @@ def home():
 
     conn.close()
 
-    return render_template("home.html", gradients=gradients)
+    return render_template("home.html", gradients=gradients, user_plan=session.get("user_plan", "free") )
 
 
 
