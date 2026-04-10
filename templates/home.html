@@ -204,8 +204,8 @@ body{
             </a>
 
         </div>
-
-        <div class="builder-card p-4 position-relative">
+</div>
+<div class="builder-card p-4 position-relative">
 
     <!-- 🔒 PRO OVERLAY -->
     <div id="proOverlay" class="pro-overlay d-none">
@@ -253,11 +253,10 @@ body{
     </div>
 
 </div>
-        </div>
 
-    </div>
 
-</div>
+
+      
 <div class="mt-5">
 
     <h5>✨ Try Presets</h5>
@@ -345,8 +344,9 @@ window.addEventListener("scroll", () => {
 
 <script>
 
-let isPro = {{ 'true' if user_plan == 'pro' else 'false' }};
+
 let colors = ["#6366f1", "#ec4899"];
+let isPro = {{ 'true' if user_plan == 'pro' else 'false' }};
 let isPro = false; // 🔥 toggle later from backend
 
 const container = document.getElementById("colorsContainer");
