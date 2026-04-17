@@ -7,18 +7,19 @@ from functools import wraps
 import psycopg2 
 import json
 import os
+import secrets
 from psycopg2.extras import RealDictCursor
 from psycopg2 import errors
+import json
 from flask import abort
 import re
 import stripe
 
+
+
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY")
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY") # 🔴 secret key
-
-
-
 
 csrf = CSRFProtect(app)
 
@@ -31,7 +32,15 @@ def get_db_connection():
 
     if database_url:
         return psycopg2.connect(database_url, sslmode="require")
-    
+    else:
+        # Local fallback
+        return psycopg2.connect(
+            dbname="gradientsaas",
+            user="gradientsaas_user",
+            password="12345abc",
+            host="localhost",
+            port="5432"
+        )
 # Database helper
 
 def build_email_template(title, message, button_text=None, button_link=None):
@@ -84,13 +93,7 @@ def create_tables():
         id SERIAL PRIMARY KEY,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
-        role TEXT,
-        username TEXT,
-        plan TEXT DEFAULT 'free',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        stripe_customer_id TEXT,
-        stripe_subscription_id TEXT,
-        payment_failed BOOLEAN DEFAULT FALSE
+        role TEXT
     );
     """)
 
@@ -257,8 +260,8 @@ from email.mime.text import MIMEText
 
 def send_email(to_email, subject, body):
 
-    sender_email = os.environ.get("MAIL_USERNAME")
-    sender_password = os.environ.get("MAIL_PASSWORD")  
+    sender_email = "guesthousechl@gmail.com"
+    sender_password = "mtfu wpdz pwbm jidu"  # ⚠️ NOT normal password
 
     msg = MIMEText(body, "html")
     msg["Subject"] = subject
@@ -316,9 +319,42 @@ def register():
 
     return render_template("register.html")
 
+#root Function
+@app.route("/")
+def home():
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT name, slug, gradient_type, angle, colors
+        FROM palettes
+        WHERE public=TRUE
+        ORDER BY id DESC
+        LIMIT 8
+    """)
+
+    rows = cursor.fetchall()
+
+    gradients = [
+        {
+            "name": r[0],
+            "slug": r[1],
+            "gradient_type": r[2],
+            "angle": r[3],
+            "colors": json.loads(r[4])
+        }
+        for r in rows
+    ]
+
+    conn.close()
+
+    return render_template("home.html", gradients=gradients, user_plan=session.get("user_plan", "free") )
+
 # Login route
+@csrf.exempt
 @app.route("/login", methods=["GET", "POST"])
-@limiter.limit("10 per minute")
+@limiter.limit("5 per minute")
 def login():
 
     error = ""
@@ -343,6 +379,8 @@ def login():
             session["user_id"] = user[0]
             session["username"] = user[1]
             session["role"] = user[3]   # ✅ FIXED
+
+            print("ROLE:", user[3])
 
             if user[3] == "admin":
                 print("Redirecting to admin panel")
@@ -413,38 +451,6 @@ def dashboard():
     palette_limit=palette_limit
     )
     
-@app.route("/")
-def home():
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT name, slug, gradient_type, angle, colors
-        FROM palettes
-        WHERE public=TRUE
-        ORDER BY id DESC
-        LIMIT 8
-    """)
-
-    rows = cursor.fetchall()
-
-    gradients = [
-        {
-            "name": r[0],
-            "slug": r[1],
-            "gradient_type": r[2],
-            "angle": r[3],
-            "colors": json.loads(r[4])
-        }
-        for r in rows
-    ]
-
-    conn.close()
-
-    return render_template("home.html", gradients=gradients, user_plan=session.get("user_plan", "free") )
-
-
 
 #Save Gradient route
 @app.route("/save-gradient", methods=["POST"])
@@ -463,8 +469,7 @@ def save_gradient():
         gradient_css = f"radial-gradient(circle, {','.join(settings['colors'])})"
 
     conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute(
+    conn.execute(
         "INSERT INTO gradients (user_id,name,settings) VALUES (%s,%s,%s)",
         (session["user_id"], data["name"], gradient_css)
     )
@@ -598,6 +603,7 @@ def delete_user(user_id):
   
     
 # Save Palettes route    
+
 @app.route("/save_palette", methods=["POST"])
 def save_palette():
     if "user_id" not in session:
@@ -686,6 +692,7 @@ def save_palette():
     return jsonify({"status": "success"})
 
 # Delete Palettes
+
 @app.route("/delete_palette/<int:palette_id>", methods=["POST"])
 def delete_palette(palette_id):
     if "user_id" not in session:
@@ -1079,8 +1086,8 @@ def create_checkout_session():
             },
             'quantity': 1,
         }],
-        success_url=os.environ.get("DOMAIN") + "/success",
-        cancel_url=os.environ.get("DOMAIN") + "/pricing",
+        success_url="http://127.0.0.1:5000/success",
+        cancel_url="http://127.0.0.1:5000/pricing",
         metadata={"user_id": str(user_id)}
     )
 
@@ -1097,7 +1104,7 @@ def stripe_webhook():
 
     payload = request.data
     sig_header = request.headers.get("Stripe-Signature")
-    endpoint_secret = os.environ.get("STRIPE_WEBHOOK_SECRET")
+    endpoint_secret = "whsec_881b71678a230bf8b7bcd534fca84209fc0ea6ec8d0b55e3e665e03c9f7c359d"
 
     try:
         event = stripe.Webhook.construct_event(
@@ -1320,7 +1327,7 @@ def billing_portal():
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SECURE=True,  # True when using HTTPS
+    SESSION_COOKIE_SECURE=False,  # True when using HTTPS
     SESSION_COOKIE_SAMESITE="Lax"
     )   
 

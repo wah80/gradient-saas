@@ -39,6 +39,29 @@ background: radial-gradient(circle, {{ gradient.colors|join(',') }});
 {% endif %}
 ">
 </div>
+
+<h4>CSS Code</h4>
+
+<pre id="cssCode">
+{% if gradient.gradient_type == 'linear' %}
+background: linear-gradient({{gradient.angle}}deg, {{ gradient.colors|join(',') }});
+{% else %}
+background: radial-gradient(circle, {{ gradient.colors|join(',') }});
+{% endif %}
+</pre>
+
+<button class="btn btn-primary" onclick="copyCSS()">
+Copy CSS
+</button>
+<a href="/top-gradients" class="btn btn-primary ">
+Top 100 Gradients
+</a>
+
+<a href="/gradients" class="btn btn-secondary">
+Back to Gallery
+</a>
+
+
 <h3 class="mt-5 mb-3">Related Gradients</h3>
 
 <div class="row">
@@ -72,26 +95,10 @@ background: radial-gradient(circle, {{ g.colors|join(',') }});
 </div>
 
 
-<h4>CSS Code</h4>
 
-<pre id="cssCode">
-{% if gradient.gradient_type == 'linear' %}
-background: linear-gradient({{gradient.angle}}deg, {{ gradient.colors|join(',') }});
-{% else %}
-background: radial-gradient(circle, {{ gradient.colors|join(',') }});
-{% endif %}
-</pre>
 
-<button class="btn btn-primary" onclick="copyCSS()">
-Copy CSS
-</button>
 
-<a href="/gradients" class="btn btn-secondary">
-Back to Gallery
-</a>
-<a href="/top-gradients" class="nav-link">
-Top 100 Gradients
-</a>
+
 <script>
 
 function copyCSS(){

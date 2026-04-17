@@ -1,7 +1,7 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
 
+{% block content %}
 <title>{{ color|capitalize }} CSS Gradients</title>
 
 <meta name="description"
@@ -28,7 +28,7 @@ transform:scale(1.05);
 </head>
 
 <body class="container py-5">
-<p>Total: {{ gradients|length }}</p>
+
 
 <h1 class="mb-4">
 {{ color|capitalize }} Gradients
@@ -60,9 +60,15 @@ background: radial-gradient(circle, {{ g.colors|join(',') }});
 
 </div>
 
-{% endfor %}
 
+{% endfor %}
 </div>
 
-</body>
-</html>
+<a href="/gradients/blue">Blue Gradients</a>
+<a href="/gradients/pink">Pink Gradients</a>
+<a href="/gradients/dark">Dark Gradients</a>
+<a href="/gradients/vibrant">Vibrant Gradients</a>
+
+
+
+{% endblock %}

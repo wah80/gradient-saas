@@ -1,7 +1,14 @@
 
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<title>Free CSS Gradient</title>
+
+<body class="container py-5">
 
 <h1>Free CSS Gradients</h1>
-<a href="/top-gradients" class="nav-link">
+
 Top 100 Gradients
 </a>
 <br><br>
@@ -9,13 +16,14 @@ Top 100 Gradients
 
 {% for g in gradients %}
 
-<div class="col-md-3">
+
+<div class="col-md-4 mb-3">
 
 <a href="/gradient/{{ g.slug }}">
 
 
 <div class="gradient-box"
-style="background: linear-gradient({{g.angle}}deg, {{ g.colors|join(',') }}); height:120px; border-radius:10px;">
+style="height:120px; border-radius:30px; background: linear-gradient({{g.angle}}deg, {{ g.colors|join(',') }});">
 </div>
 
 <p>{{ g.name }}</p>
@@ -27,5 +35,4 @@ style="background: linear-gradient({{g.angle}}deg, {{ g.colors|join(',') }}); he
 {% endfor %}
 
 </div>
-
-
+{% endblock %}

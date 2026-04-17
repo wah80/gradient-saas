@@ -1,518 +1,337 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <title>Gradient SaaS</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Gradient SaaS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-<style>
+    <style>
 
-body{
-    font-family: Inter, system-ui, sans-serif;
-    background:#ffffff;
-    color:#0a0a0a;
-}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #0f172a, #020617);
+            color: white;
+        }
 
-/* NAVBAR */
-.navbar{
-    padding:20px 0;
-}
+        .navbar {
+            backdrop-filter: blur(12px);
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
 
-.navbar a{
-    font-weight:500;
-}
+        .hero {
+            padding: 100px 0;
+            text-align: center;
+        }
 
-/* HERO */
-.hero{
-    padding:100px 20px;
-}
+        .gradient-box {
+            height: 220px;
+            border-radius: 20px;
+            margin-top: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            transition: transform 0.4s ease;
+        }
 
-.hero h1{
-    font-size:56px;
-    font-weight:700;
-    line-height:1.2;
-}
+        .gradient-box:hover {
+            transform: scale(1.05);
+        }
 
-.hero p{
-    font-size:18px;
-    color:#666;
-    margin-top:20px;
-}
+        .glass {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(14px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
 
-/* BUTTON */
-.btn-primary-custom{
-    background:#635bff;
-    border:none;
-    padding:12px 24px;
-    border-radius:8px;
-    font-weight:600;
-}
+        .btn-main {
+            background: linear-gradient(135deg, #6366f1, #ec4899);
+            border: none;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 999px;
+            transition: 0.3s;
+        }
 
-.btn-primary-custom:hover{
-    background:#4f46e5;
-}
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(236,72,153,0.4);
+        }
 
-/* SECOND BUTTON */
-.btn-outline{
-    border:1px solid #ddd;
-    padding:12px 24px;
-    border-radius:8px;
-}
+        .feature-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
 
-/* PRODUCT PREVIEW */
-.preview-box{
-    background:#0f172a;
-    border-radius:16px;
-    padding:20px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.1);
-}
+        .pricing-card {
+            transition: 0.3s;
+        }
 
-.gradient-preview{
-    height:220px;
-    border-radius:12px;
-	transition: all .3s ease;
-}
+        .pricing-card:hover {
+            transform: translateY(-8px);
+        }
+		.animated-bg{
+			position:absolute;
+			inset:0;
+			z-index:-1;
 
-/* FEATURES */
-.feature{
-    padding:40px;
-    border-radius:12px;
-    transition:.2s;
-}
+			background: linear-gradient(-45deg, #6366f1, #ec4899, #06b6d4, #3b82f6);
+			background-size: 400% 400%;
 
-.feature:hover{
-    background:#f9fafb;
-}
+			animation: gradientMove 12s ease infinite;
+			filter: blur(80px);
+			opacity: 0.6;
+		}
 
-/* SECTION */
-.section{
-    padding:80px 0;
-}
+		@keyframes gradientMove {
+			0%{background-position:0% 50%;}
+			50%{background-position:100% 50%;}
+			100%{background-position:0% 50%;}
+		}
+		.fade-up{
+			opacity:0;
+			transform:translateY(30px);
+			transition: all .8s ease;
+		}
 
-/* FOOTER */
-.footer{
-    padding:40px;
-    text-align:center;
-    color:#777;
-}
+		.fade-up.show{
+			opacity:1;
+			transform:translateY(0);
+		}
+		.copy-btn{
+			position:absolute;
+			top:5px;
+			right:5px;
+			border:none;
+			background:rgba(0,0,0,0.6);
+			color:#fff;
+			border-radius:5px;
+			padding:3px 6px;
+			font-size:12px;
+		}
+		.auto-scroll{
+			overflow:hidden;
+			margin-top:50px;
+		}
 
-/* SUBTLE ANIMATION */
-.fade-up{
-    opacity:0;
-    transform:translateY(30px);
-    transition:all .6s ease;
-}
+		.scroll-track{
+			display:flex;
+			gap:20px;
+			animation: scrollMove 20s linear infinite;
+		}
 
-.fade-up.show{
-    opacity:1;
-    transform:translateY(0);
-}
+		.scroll-item{
+			min-width:200px;
+			height:120px;
+			border-radius:12px;
+		}
 
-.builder-card{
-    background:#fff;
-    border-radius:16px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.08);
-    overflow:hidden;
-}
-
-/* 🔒 Overlay */
-.pro-overlay{
-    position:absolute;
-    inset:0;
-    background:rgba(255,255,255,0.9);
-    backdrop-filter:blur(6px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:10;
-}
-
-/* COLOR ROW */
-.color-row{
-    display:flex;
-    gap:10px;
-    margin-bottom:10px;
-}
-.toast-msg{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    background:#111;
-    color:#fff;
-    padding:10px 20px;
-    border-radius:8px;
-    opacity:0;
-    transition:.3s;
-}
-.toast-msg.show{
-    opacity:1;
-}
-.preset{
-    width:80px;
-    height:80px;
-    border-radius:10px;
-    cursor:pointer;
-    transition:.2s;
-}
-.preset:hover{
-    transform:scale(1.1);
-}
-
-</style>
-
+		@keyframes scrollMove{
+			0%{transform:translateX(0);}
+			100%{transform:translateX(-50%);}
+		}
+		
+		
+    </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center navbar">
 
-        <h4>Gradient SaaS</h4>
+    <!-- 🔥 NAVBAR -->
+    <div class="d-flex justify-content-between align-items-center p-3 navbar">
+        <h4>🎨 Gradient SaaS</h4>
 
         <div>
-            <a href="/login" class="me-3">Login</a>
-            <a href="/pricing" class="btn btn-primary-custom">Upgrade</a>
+            <a href="/login" class="text-white me-3">Login</a>
+            <a href="/register" class="btn btn-main">Get Started</a>
+        </div>
+    </div>
+
+    <!-- 🚀 HERO -->
+    <div class="hero">
+	
+		<div class="animated-bg"></div>
+        <h1 class="fade-up" fw-bold">
+            Create Beautiful CSS Gradients
+        </h1>
+
+        <p class="fade-up" mt-3">
+            Generate, customize, and save stunning gradients in seconds.
+        </p>
+
+        <div class="mt-4">
+            <a href="/register" class="btn btn-main me-2">Start Free</a>
+            <a href="/gradients" class="btn btn-outline-light">Explore</a>
+        </div>
+		
+        <div id="hero-gradient" class="gradient-box"></div>
+		
+
+    </div>
+	<div class="auto-scroll">
+
+		<div class="scroll-track">
+
+			<div class="scroll-item" style="background:linear-gradient(45deg,#ff6a00,#ee0979)"></div>
+			<div class="scroll-item" style="background:linear-gradient(90deg,#00c6ff,#0072ff)"></div>
+			<div class="scroll-item" style="background:linear-gradient(120deg,#f7971e,#ffd200)"></div>
+
+			<!-- duplicate for infinite effect -->
+			<div class="scroll-item" style="background:linear-gradient(45deg,#ff6a00,#ee0979)"></div>
+			<div class="scroll-item" style="background:linear-gradient(90deg,#00c6ff,#0072ff)"></div>
+			<div class="scroll-item" style="background:linear-gradient(120deg,#f7971e,#ffd200)"></div>
+
+		</div>
+
+	</div></br></br>
+	
+	
+    <!-- 💎 FEATURES -->
+    <div class="row text-center mb-5">
+
+        <div class="col-md-4">
+            <div class="glass">
+                <div class="feature-icon">⚡</div>
+                <h5>Instant Generator</h5>
+                <p>Create gradients in one click</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="glass">
+                <div class="feature-icon">🎨</div>
+                <h5>Save Palettes</h5>
+                <p>Store your favorites forever</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="glass">
+                <div class="feature-icon">📋</div>
+                <h5>Copy CSS</h5>
+                <p>Ready-to-use code instantly</p>
+            </div>
         </div>
 
     </div>
-</div>
 
-<!-- HERO WITH LIVE BUILDER -->
-<div class="container hero">
+    <!-- 🔥 GRADIENT SHOWCASE -->
+    <h2 class="text-center mb-4">Trending Gradients</h2>
 
-    <div class="row align-items-center">
+    <div class="row">
 
-        <!-- TEXT -->
-        <div class="col-md-5">
+        {% for g in gradients %}
+        <div class="col-md-3 mb-4">
 
-            <h1>
-                Build gradients  
-                <br> in real-time
-            </h1>
+            <a href="/gradient/{{ g.slug }}" style="text-decoration:none">
 
-            <p>
-                Create, preview, and copy CSS gradients instantly.
-            </p>
+                <div class="gradient-box"
+                    style="
+                    {% if g.gradient_type == 'linear' %}
+                    background: linear-gradient({{g.angle}}deg, {{ g.colors|join(',') }});
+                    {% else %}
+                    background: radial-gradient(circle, {{ g.colors|join(',') }});
+                    {% endif %}
+                    ">
+                </div>
 
-            <a href="/dashboard" class="btn btn-primary-custom mt-3">
-                Save your gradients
+                <p class="text-center mt-2 text-white">{{ g.name }}</p>
+
             </a>
 
         </div>
-</div>
-<div class="builder-card p-4 position-relative">
-
-    <!-- 🔒 PRO OVERLAY -->
-    <div id="proOverlay" class="pro-overlay d-none">
-        <div class="text-center">
-            <h5>🔒 Pro Feature</h5>
-            <p>Unlock radial & multi-color gradients</p>
-            <a href="/pricing" class="btn btn-primary-custom">Upgrade</a>
-        </div>
-    </div>
-
-    <!-- PREVIEW -->
-    <div id="preview" class="gradient-preview mb-4"></div>
-
-    <!-- TYPE TOGGLE -->
-    <div class="mb-3">
-        <label>Type</label>
-        <select id="type" class="form-select">
-            <option value="linear">Linear</option>
-            <option value="radial">Radial (Pro)</option>
-        </select>
-    </div>
-
-    <!-- COLORS -->
-    <div id="colorsContainer"></div>
-
-    <button onclick="addColor()" class="btn btn-outline-secondary mt-2">
-        + Add Color
-    </button>
-
-    <!-- ANGLE -->
-    <div class="mt-3" id="angleWrapper">
-        <label>Angle: <span id="angleVal">135</span>°</label>
-        <input type="range" id="angle" min="0" max="360" value="135" class="form-range">
-    </div>
-
-    <!-- CSS -->
-    <textarea id="cssOutput" class="form-control mt-3" rows="2" readonly></textarea>
-
-    <!-- ACTIONS -->
-    <div class="mt-3 d-flex justify-content-between">
-        <button onclick="copyCSS()" class="btn btn-dark">Copy</button>
-        <button onclick="saveGradient()" class="btn btn-primary-custom">
-			Save Gradient
-		</button>
-    </div>
-
-</div>
-
-
-
-      
-<div class="mt-5">
-
-    <h5>✨ Try Presets</h5>
-
-    <div class="d-flex gap-3 mt-3 flex-wrap">
-
-        <div class="preset" onclick="applyPreset(['#6366f1','#ec4899'],135)"
-             style="background:linear-gradient(135deg,#6366f1,#ec4899);"></div>
-
-        <div class="preset" onclick="applyPreset(['#06b6d4','#3b82f6'],90)"
-             style="background:linear-gradient(90deg,#06b6d4,#3b82f6);"></div>
-
-        <div class="preset" onclick="applyPreset(['#f59e0b','#ef4444'],45)"
-             style="background:linear-gradient(45deg,#f59e0b,#ef4444);"></div>
-
-        <div class="preset" onclick="applyPreset(['#22c55e','#16a34a'],120)"
-             style="background:linear-gradient(120deg,#22c55e,#16a34a);"></div>
+        {% endfor %}
 
     </div>
 
-</div>
+    <!-- 💰 PRICING -->
+    <div class="text-center my-5">
+        <h2>Simple Pricing</h2>
+    </div>
 
-<!-- FEATURES -->
-<div class="container section">
+    <div class="row justify-content-center">
 
-    <div class="row text-center">
-
-        <div class="col-md-4 fade-up">
-            <div class="feature">
-                <h5>⚡ Fast Builder</h5>
-                <p>Create gradients instantly with real-time preview</p>
+        <div class="col-md-4">
+            <div class="glass pricing-card text-center">
+                <h4>Free</h4>
+                <p class="display-6">$0</p>
+                <p>5 palettes</p>
+                <a href="/register" class="btn btn-outline-light">Start Free</a>
             </div>
         </div>
 
-        <div class="col-md-4 fade-up">
-            <div class="feature">
-                <h5>💾 Save & Manage</h5>
-                <p>Organize your palettes in one dashboard</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 fade-up">
-            <div class="feature">
-                <h5>🚀 Pro Features</h5>
-                <p>Unlock radial gradients & unlimited saves</p>
+        <div class="col-md-4">
+            <div class="glass pricing-card text-center border border-light">
+                <h4>Pro</h4>
+                <p class="display-6">$5/mo</p>
+                <p>Unlimited gradients + Pro tools</p>
+                <a href="/pricing" class="btn btn-main">Upgrade</a>
             </div>
         </div>
 
     </div>
 
+    <!-- 🚀 CTA -->
+    <div class="text-center my-5">
+        <h2>Start Creating Today 🚀</h2>
+        <a href="/register" class="btn btn-main mt-3">Get Started Free</a>
+    </div>
+	
+
+    <!-- FOOTER -->
+    <div class="text-center py-4 text-muted">
+        © 2026 Gradient SaaS
+    </div>
+
 </div>
 
-<!-- CTA -->
-<div class="container text-center section fade-up">
-
-    <h2>Start building today</h2>
-    <p class="text-muted">Free plan available. Upgrade anytime.</p>
-
-    <a href="/pricing" class="btn btn-primary-custom mt-3">
-        View Pricing
-    </a>
-
-</div>
-
-<!-- FOOTER -->
-<div class="footer">
-    © 2026 Gradient SaaS
-</div>
-
+<!-- 🔥 SCRIPT -->
+<script>
+fetch("/api/random-gradient")
+.then(res => res.json())
+.then(data => {
+    document.getElementById("hero-gradient").style = data.css;
+});
+</script>
 <script>
 
-/* SIMPLE SCROLL ANIMATION */
-const elements = document.querySelectorAll(".fade-up");
-
-window.addEventListener("scroll", () => {
-    elements.forEach(el => {
-        const top = el.getBoundingClientRect().top;
-        if(top < window.innerHeight - 100){
-            el.classList.add("show");
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting){
+            entry.target.classList.add("show");
         }
     });
 });
 
-</script>
+document.querySelectorAll(".fade-up").forEach(el => observer.observe(el));
 
-<script>
-
-
-let colors = ["#6366f1", "#ec4899"];
-let isPro = {{ 'true' if user_plan == 'pro' else 'false' }};
-let isPro = false; // 🔥 toggle later from backend
-
-const container = document.getElementById("colorsContainer");
-const preview = document.getElementById("preview");
-const cssOutput = document.getElementById("cssOutput");
-const angle = document.getElementById("angle");
-const angleVal = document.getElementById("angleVal");
-const type = document.getElementById("type");
-const overlay = document.getElementById("proOverlay");
-const angleWrapper = document.getElementById("angleWrapper");
-
-/* RENDER COLORS */
-function renderColors(){
-    container.innerHTML = "";
-
-    colors.forEach((color, index) => {
-
-        const row = document.createElement("div");
-        row.className = "color-row";
-
-        row.innerHTML = `
-            <input type="color" value="${color}" 
-                   onchange="updateColor(${index}, this.value)">
-            <button onclick="removeColor(${index})" class="btn btn-sm btn-danger">×</button>
-        `;
-
-        container.appendChild(row);
-    });
-}
-
-function saveGradient(){
-
-    fetch("/save_palette", {
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-            name:"My Gradient",
-            colors: colors,
-            gradient_type: type.value,
-            angle: angle.value
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        if(data.status === "success"){
-            showToast("✅ Saved!");
-        }else{
-            showToast("❌ " + data.message);
-        }
-
-    })
-    .catch(() => showToast("Server error"));
-}
-
-
-/* ADD COLOR */
-function addColor(){
-    if(!isPro && colors.length >= 2){
-       showUpgrade();
-        return;
-    }
-
-    colors.push("#000000");
-    renderColors();
-    updateGradient();
-}
-
-/* REMOVE */
-function removeColor(index){
-    colors.splice(index,1);
-    renderColors();
-    updateGradient();
-}
-
-function showToast(msg){
-    const t = document.getElementById("toast");
-    t.innerText = msg;
-    t.classList.add("show");
-
-    setTimeout(()=>t.classList.remove("show"),2000);
-}
-
-function applyPreset(presetColors, presetAngle){
-
-    colors = presetColors;
-    angle.value = presetAngle;
-
-    renderColors();
-    updateGradient();
-}
-
-/* UPDATE COLOR */
-function updateColor(index, value){
-    colors[index] = value;
-    updateGradient();
-}
-
-function showUpgrade(){
-    let modal = new bootstrap.Modal(document.getElementById('upgradeModal'));
-    modal.show();
-}
-
-/* MAIN LOGIC */
-function updateGradient(){
-
-    let gradient;
-
-    if(type.value === "linear"){
-        gradient = `linear-gradient(${angle.value}deg, ${colors.join(",")})`;
-        angleWrapper.style.display = "block";
-    } else {
-
-        if(!isPro){
-            showUpgrade();
-            type.value = "linear";
-            return;
-        }
-
-        gradient = `radial-gradient(circle, ${colors.join(",")})`;
-        angleWrapper.style.display = "none";
-    }
-
-    preview.style.background = gradient;
-    cssOutput.value = `background: ${gradient};`;
-
-    angleVal.innerText = angle.value;
-}
-
-/* COPY */
 function copyCSS(){
-    cssOutput.select();
-    document.execCommand("copy");
-    alert("Copied!");
+
+    navigator.clipboard.writeText(cssOutput.value);
+
+    showToast("📋 CSS Copied!");
+}
+function copyPreset(e, colors, angle){
+
+    e.stopPropagation();
+
+    const css = `background: linear-gradient(${angle}deg, ${colors.join(",")});`;
+
+    navigator.clipboard.writeText(css);
+
+    showToast("📋 Preset copied!");
 }
 
-/* EVENTS */
-angle.addEventListener("input", updateGradient);
-type.addEventListener("change", updateGradient);
-
-/* INIT */
-renderColors();
-updateGradient();
-
 </script>
-<div class="modal fade" id="upgradeModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content p-4 text-center">
 
-      <h4>🚀 Upgrade to Pro</h4>
-      <p>Unlock radial gradients & unlimited colors</p>
 
-      <div class="d-grid gap-2 mt-3">
-        <a href="/create-checkout-session" class="btn btn-primary-custom">
-          Upgrade Now – $5/month
-        </a>
-        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">
-          Maybe later
-        </button>
-      </div>
-
-    </div>
-  </div>
-</div>
 </body>
 </html>
-
