@@ -354,7 +354,7 @@ def home():
 # Login route
 @csrf.exempt
 @app.route("/login", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
+@limiter.limit("10 per minute")
 def login():
 
     error = ""
@@ -1071,26 +1071,29 @@ def upgrade():
 def create_checkout_session():
 
     user_id = session["user_id"]
-
-    checkout = stripe.checkout.Session.create(
-        payment_method_types=['card'],
-        mode='subscription',
-        line_items=[{
-            'price_data': {
-                'currency': 'usd',
-                'product_data': {
-                    'name': 'Pro Plan - Gradient SaaS',
+    
+    try:
+        checkout = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            mode='subscription',
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'Pro Plan - Gradient SaaS',
+                    },
+                    'unit_amount': 500,
+                    'recurring': {'interval': 'month'},
                 },
-                'unit_amount': 500,
-                'recurring': {'interval': 'month'},
-            },
-            'quantity': 1,
-        }],
-        success_url="http://127.0.0.1:5000/success",
-        cancel_url="http://127.0.0.1:5000/pricing",
-        metadata={"user_id": str(user_id)}
-    )
-
+                'quantity': 1,
+            }],
+            success_url="http://127.0.0.1:5000/success",
+            cancel_url="http://127.0.0.1:5000/pricing",
+            metadata={"user_id": str(user_id)}
+        )
+    except stripe.error.AuthenticationError as e:
+        print("Stripe auth error:", str(e))
+        return "Payment service temporarily unavailable", 500
     return redirect(checkout.url)
 
 
@@ -1105,6 +1108,7 @@ def stripe_webhook():
     payload = request.data
     sig_header = request.headers.get("Stripe-Signature")
     endpoint_secret = os.environ.get("STRIPE_WEBHOOK_SECRET")
+
 
     try:
         event = stripe.Webhook.construct_event(
