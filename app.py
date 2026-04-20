@@ -120,8 +120,11 @@ def create_tables():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """)
-    
-    
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS stripe_events (
+        id TEXT PRIMARY KEY
+    );
+    """)
         
     conn.commit()
     conn.close()
@@ -354,7 +357,7 @@ def home():
 # Login route
 @csrf.exempt
 @app.route("/login", methods=["GET", "POST"])
-@limiter.limit("10 per minute")
+@limiter.limit("30 per minute")
 def login():
 
     error = ""
@@ -1068,33 +1071,34 @@ def upgrade():
 
 @app.route("/create-checkout-session")
 @login_required
+@limiter.limit("10 per minute")
 def create_checkout_session():
 
     user_id = session["user_id"]
-    
+
     try:
         checkout = stripe.checkout.Session.create(
             payment_method_types=['card'],
             mode='subscription',
+
             line_items=[{
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': 'Pro Plan - Gradient SaaS',
-                    },
-                    'unit_amount': 500,
-                    'recurring': {'interval': 'month'},
-                },
+                'price': os.environ.get("STRIPE_PRICE_ID"),  # ✅ use price ID (IMPORTANT)
                 'quantity': 1,
             }],
-            success_url="http://127.0.0.1:5000/success",
-            cancel_url="http://127.0.0.1:5000/pricing",
-            metadata={"user_id": str(user_id)}
+
+            success_url=f"{DOMAIN}/success?session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{DOMAIN}/pricing",
+
+            metadata={
+                "user_id": str(user_id)
+            }
         )
-    except stripe.error.AuthenticationError as e:
-        print("Stripe auth error:", str(e))
-        return "Payment service temporarily unavailable", 500
-    return redirect(checkout.url)
+
+        return redirect(checkout.url)
+
+    except Exception as e:
+        print("❌ Stripe Checkout Error:", str(e))
+        return "Payment service error", 500
 
 
 @app.route("/success")
@@ -1118,6 +1122,28 @@ def stripe_webhook():
         return str(e), 400
 
     print("✅ Event:", event["type"])
+    
+    # =====================================
+    # 🔐 IDEMPOTENCY CHECK 
+    # =====================================
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    event_id = event["id"]
+
+    cursor.execute(
+        "SELECT id FROM stripe_events WHERE id=%s",
+        (event_id,)
+    )
+    if cursor.fetchone():
+        conn.close()
+        return "", 200   # ✅ already processed
+
+    cursor.execute(
+        "INSERT INTO stripe_events (id) VALUES (%s)",
+        (event_id,)
+    )
+    conn.commit()
 
     # ==============================
     # 🎉 PAYMENT SUCCESS
@@ -1256,6 +1282,7 @@ def stripe_webhook():
 
         customer_id = invoice["customer"]
         amount_paid = invoice["amount_paid"] / 100  # convert cents → dollars
+        currency = invoice["currency"]
         created = datetime.fromtimestamp(invoice["created"])
 
         conn = get_db_connection()
@@ -1320,7 +1347,7 @@ def billing_portal():
 
     portal = stripe.billing_portal.Session.create(
         customer=customer_id,
-        return_url="http://127.0.0.1:5000/dashboard"
+        return_url=f"{DOMAIN}/dashboard"
     )
 
     return redirect(portal.url)
