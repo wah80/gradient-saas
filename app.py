@@ -288,6 +288,7 @@ def send_email(to_email, subject, body):
 # Register route
 from psycopg2 import errors
 
+@csrf.exempt
 @app.route("/register", methods=["GET", "POST"])
 def register():
     
