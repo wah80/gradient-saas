@@ -1081,19 +1081,21 @@ def create_checkout_session():
         checkout = stripe.checkout.Session.create(
             payment_method_types=['card'],
             mode='subscription',
-
             line_items=[{
-                'price': os.environ.get("STRIPE_PRICE_ID"),  # ✅ use price ID (IMPORTANT)
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'Pro Plan - Gradient SaaS',
+                    },
+                    'unit_amount': 500,
+                    'recurring': {'interval': 'month'},
+                },
                 'quantity': 1,
             }],
-
-            success_url="https://127.0.0.1:500/success?session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url="https://127.0.0.1:500/pricing",
-
-            metadata={
-                "user_id": str(user_id)
-            }
-        )
+        success_url=f"{DOMAIN}/success?session_id={{CHECKOUT_SESSION_ID}}",
+        cancel_url=f"{DOMAIN}/pricing",
+        metadata={"user_id": str(user_id)}
+    )
 
         return redirect(checkout.url)
 
