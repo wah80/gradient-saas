@@ -1087,8 +1087,8 @@ def create_checkout_session():
                 'quantity': 1,
             }],
 
-            success_url=f"{DOMAIN}/success?session_id={{CHECKOUT_SESSION_ID}}",
-            cancel_url=f"{DOMAIN}/pricing",
+            success_url="https://127.0.0.1:500/success?session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url="https://127.0.0.1:500/pricing",
 
             metadata={
                 "user_id": str(user_id)
