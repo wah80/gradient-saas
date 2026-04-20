@@ -24,7 +24,7 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY") # 🔴 secret key
 csrf = CSRFProtect(app)
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
-DOMAIN = os.environ.get("DOMAIN", "http://127.0.0.1:5000")
+DOMAIN = os.environ.get("DOMAIN", "https://gradient-saas.onrender.com")
 
 
 def get_db_connection():
