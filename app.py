@@ -24,7 +24,7 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY") # 🔴 secret key
 csrf = CSRFProtect(app)
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
-DOMAIN = os.environ.get("DOMAIN", "https://gradient-saas.onrender.com")
+DOMAIN = os.environ.get("DOMAIN", "http://127.0.0.1:5000")
 
 
 def get_db_connection():
@@ -1092,8 +1092,8 @@ def create_checkout_session():
                 },
                 'quantity': 1,
             }],
-        success_url=f"{DOMAIN}/success?session_id={{CHECKOUT_SESSION_ID}}",
-        cancel_url=f"{DOMAIN}/pricing",
+        success_url="http://127.0.0.1/success?session_id={{CHECKOUT_SESSION_ID}}",
+        cancel_url="http://127.0.0.1/pricing",
         metadata={"user_id": str(user_id)}
     )
 
