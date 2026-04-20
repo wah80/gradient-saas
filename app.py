@@ -1350,7 +1350,7 @@ def billing_portal():
 
     portal = stripe.billing_portal.Session.create(
         customer=customer_id,
-        return_url=f"{DOMAIN}/dashboard"
+        return_url="https://127.0.0.1:5000/dashboard"
     )
 
     return redirect(portal.url)
