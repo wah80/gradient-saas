@@ -1360,7 +1360,7 @@ def billing_portal():
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SECURE=False,  # True when using HTTPS
+    SESSION_COOKIE_SECURE=True,  # True when using HTTPS
     SESSION_COOKIE_SAMESITE="Lax"
     )   
 
