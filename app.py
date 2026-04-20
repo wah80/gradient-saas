@@ -1092,8 +1092,8 @@ def create_checkout_session():
                 },
                 'quantity': 1,
             }],
-        success_url="http://127.0.0.1/success?session_id={{CHECKOUT_SESSION_ID}}",
-        cancel_url="http://127.0.0.1/pricing",
+        success_url="https://gradient-saas.onrender.com/success?session_id={{CHECKOUT_SESSION_ID}}",
+        cancel_url="https://gradient-saas.onrender.com/pricing",
         metadata={"user_id": str(user_id)}
     )
 
@@ -1188,7 +1188,7 @@ def stripe_webhook():
                     "You're now Pro 🚀",
                     "You now have access to unlimited gradients.",
                     "Start Creating",
-                    "http://127.0.0.1:5000/dashboard"
+                    "https://gradient-saas.onrender.com/dashboard"
                 )
             )
 
@@ -1228,7 +1228,7 @@ def stripe_webhook():
                     "Sorry to see you go 😢",
                     "Your subscription has been cancelled.",
                     "Upgrade Again",
-                    "http://127.0.0.1:5000/pricing"
+                    "https://gradient-saas.onrender.com/pricing"
                 )
             )
 
@@ -1272,7 +1272,7 @@ def stripe_webhook():
                     "Payment Failed",
                     "We couldn’t process your payment.",
                     "Fix Payment",
-                    "http://127.0.0.1:5000/billing-portal"
+                    "https://gradient-saas.onrender.com/billing-portal"
                 )
             )
 
@@ -1320,7 +1320,7 @@ def stripe_webhook():
                     "Payment Fixed 🎉",
                     "Your payment is working again.",
                     "Go to Dashboard",
-                    "http://127.0.0.1:5000/dashboard"
+                    "https://gradient-saas.onrender.com/dashboard"
                 )
             )
 
@@ -1350,7 +1350,7 @@ def billing_portal():
 
     portal = stripe.billing_portal.Session.create(
         customer=customer_id,
-        return_url="https://127.0.0.1:5000/dashboard"
+        return_url="https://gradient-saas.onrender.com/dashboard"
     )
 
     return redirect(portal.url)
