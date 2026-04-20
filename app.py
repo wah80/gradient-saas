@@ -1105,8 +1105,34 @@ def create_checkout_session():
 
 
 @app.route("/success")
+@login_required
 def success():
-    return "<h2>Payment successful! 🎉</h2><a href='/dashboard'>Go to Dashboard</a>"
+
+    session_id = request.args.get("session_id")
+
+    if not session_id:
+        return "Invalid access", 400
+
+    try:
+        checkout_session = stripe.checkout.Session.retrieve(session_id)
+
+        # 🔐 Verify payment
+        if checkout_session.payment_status != "paid":
+            return "Payment not completed", 400
+
+        customer_email = checkout_session.customer_details.email
+        amount_total = checkout_session.amount_total / 100
+
+        return render_template(
+            "success.html",
+            email=customer_email,
+            amount=amount_total,
+            plan="Pro"
+        )
+
+    except Exception as e:
+        print("❌ Success page error:", str(e))
+        return "Something went wrong", 500
 
 @csrf.exempt
 @app.route("/stripe-webhook", methods=["POST"])
