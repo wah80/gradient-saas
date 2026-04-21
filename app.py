@@ -1092,7 +1092,7 @@ def create_checkout_session():
                 },
                 'quantity': 1,
             }],
-        success_url="https://gradient-saas.onrender.com/success?session_id={{CHECKOUT_SESSION_ID}}",
+        success_url="https://gradient-saas.onrender.com/success?session_id={CHECKOUT_SESSION_ID}",
         cancel_url="https://gradient-saas.onrender.com/pricing",
         metadata={"user_id": str(user_id)}
     )
