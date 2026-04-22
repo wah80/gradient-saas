@@ -1092,10 +1092,12 @@ def create_checkout_session():
                 },
                 'quantity': 1,
             }],
-        success_url="https://gradient-saas.onrender.com/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url="https://gradient-saas.onrender.com/pricing",
-        metadata={"user_id": str(user_id)}
-    )
+            success_url="https://gradient-saas.onrender.com/success?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url="https://gradient-saas.onrender.com/pricing",
+            metadata={"user_id": str(user_id)}
+        )
+
+        print("✅ Checkout created:", checkout.id)
 
         return redirect(checkout.url)
 
@@ -1105,13 +1107,21 @@ def create_checkout_session():
 
 
 @app.route("/success")
-@login_required
 def success():
 
     session_id = request.args.get("session_id")
 
+    # ❌ Missing session_id
     if not session_id:
         return "Invalid access", 400
+
+    # ❌ Handle curly brace issue
+    if session_id.startswith("{") and session_id.endswith("}"):
+        session_id = session_id[1:-1]   # remove {}
+
+    # ❌ Validate format BEFORE Stripe call
+    if not session_id.startswith("cs_"):
+        return "Invalid session ID", 400
 
     try:
         checkout_session = stripe.checkout.Session.retrieve(session_id)
