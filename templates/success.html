@@ -1,18 +1,128 @@
-<div style="max-width:600px;margin:auto;text-align:center;padding:40px;font-family:sans-serif;">
-    
-    <h1 style="color:#00c853;">🎉 Payment Successful</h1>
+<!DOCTYPE html>
 
-    <p>Welcome to <strong>Pro Plan</strong></p>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Payment Success</title>
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <div style="background:#f5f5f5;padding:20px;border-radius:10px;margin:20px 0;">
-        <p><strong>Email:</strong> {{ email }}</p>
-        <p><strong>Amount Paid:</strong> ${{ amount }}</p>
-        <p><strong>Plan:</strong> {{ plan }}</p>
+<style>
+/* 🌈 Animated background */
+body {
+    background: linear-gradient(270deg, #0f172a, #020617, #0f172a);
+    background-size: 600% 600%;
+    animation: gradientBG 10s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+/* ✅ Success check animation */
+.checkmark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 3px solid #22c55e;
+    position: relative;
+}
+
+.checkmark::after {
+    content: "";
+    position: absolute;
+    left: 22px;
+    top: 35px;
+    width: 20px;
+    height: 40px;
+    border-right: 4px solid #22c55e;
+    border-bottom: 4px solid #22c55e;
+    transform: rotate(45deg);
+    animation: draw 0.6s ease forwards;
+}
+
+@keyframes draw {
+    from {height: 0;}
+    to {height: 40px;}
+}
+</style>
+
+</head>
+
+<body class="flex items-center justify-center h-screen text-white">
+
+<div id="card" class="bg-white/5 backdrop-blur-xl p-10 rounded-2xl shadow-2xl text-center w-[420px]">
+
+```
+<!-- 🔄 Loading -->
+<div id="loading">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
+    <p class="mt-4 text-gray-300">Verifying payment...</p>
+</div>
+
+<!-- ✅ Success -->
+<div id="success" class="hidden">
+    <div class="checkmark mx-auto mb-4"></div>
+    <h2 class="text-2xl font-bold">Payment Successful 🎉</h2>
+    <p id="email" class="text-gray-300 mt-2"></p>
+
+    <div class="bg-black/30 rounded-lg p-4 mt-6 text-left">
+        <p><strong>Plan:</strong> <span id="plan"></span></p>
+        <p><strong>Amount:</strong> $<span id="amount"></span></p>
     </div>
 
-    <a href="/dashboard" 
-       style="background:black;color:white;padding:12px 20px;border-radius:6px;text-decoration:none;">
-        Go to Dashboard
-    </a>
+    <button onclick="goDashboard()"
+        class="mt-6 w-full bg-green-500 hover:bg-green-600 py-2 rounded-lg transition">
+        Go to Dashboard →
+    </button>
+</div>
+
+<!-- ❌ Error -->
+<div id="error" class="hidden">
+    <h2 class="text-xl text-red-400">Payment Verification Failed</h2>
+    <p class="text-gray-400 mt-2">Please contact support</p>
+</div>
+```
 
 </div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const sessionId = params.get("session_id");
+
+fetch(`/api/verify-session?session_id=${sessionId}`)
+.then(res => res.json())
+.then(data => {
+
+    document.getElementById("loading").classList.add("hidden");
+
+    if (data.status === "success") {
+        document.getElementById("success").classList.remove("hidden");
+
+        document.getElementById("email").innerText = data.email;
+        document.getElementById("amount").innerText = data.amount;
+        document.getElementById("plan").innerText = data.plan;
+
+        // 🔁 auto redirect after 5s
+        setTimeout(() => {
+            window.location.href = "/dashboard";
+        }, 5000);
+
+    } else {
+        document.getElementById("error").classList.remove("hidden");
+    }
+})
+.catch(() => {
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("error").classList.remove("hidden");
+});
+
+function goDashboard() {
+    window.location.href = "/dashboard";
+}
+</script>
+
+</body>
+</html>

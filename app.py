@@ -1108,41 +1108,39 @@ def create_checkout_session():
 
 @app.route("/success")
 def success():
+    return render_template("success.html")
+    
+@app.route("/api/verify-session")
+def verify_session():
 
     session_id = request.args.get("session_id")
 
-    # ❌ Missing session_id
     if not session_id:
-        return "Invalid access", 400
+        return {"error": "Missing session_id"}, 400
 
-    # ❌ Handle curly brace issue
+    # fix {cs_xxx}
     if session_id.startswith("{") and session_id.endswith("}"):
-        session_id = session_id[1:-1]   # remove {}
+        session_id = session_id[1:-1]
 
-    # ❌ Validate format BEFORE Stripe call
     if not session_id.startswith("cs_"):
-        return "Invalid session ID", 400
+        return {"error": "Invalid session"}, 400
 
     try:
         checkout_session = stripe.checkout.Session.retrieve(session_id)
 
-        # 🔐 Verify payment
         if checkout_session.payment_status != "paid":
-            return "Payment not completed", 400
+            return {"status": "unpaid"}, 400
 
-        customer_email = checkout_session.customer_details.email
-        amount_total = checkout_session.amount_total / 100
-
-        return render_template(
-            "success.html",
-            email=customer_email,
-            amount=amount_total,
-            plan="Pro"
-        )
+        return {
+            "status": "success",
+            "email": checkout_session.customer_details.email,
+            "amount": checkout_session.amount_total / 100,
+            "plan": "Pro"
+        }
 
     except Exception as e:
-        print("❌ Success page error:", str(e))
-        return "Something went wrong", 500
+        print("❌ Verify error:", str(e))
+        return {"error": "Verification failed"}, 500    
 
 @csrf.exempt
 @app.route("/stripe-webhook", methods=["POST"])
