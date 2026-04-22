@@ -49,15 +49,17 @@ body {
 
     <p><strong>Status:</strong> {{ subscription.status }}</p>
 
-    <p class="mt-2">
-        <strong>Next Billing:</strong>
-		{% if subscription and subscription.current_period_end %}
-			{{ subscription.current_period_end | int | datetime }}
-		{% else %}
-			N/A
-		{% endif %}
-        
-    </p>
+    <p>
+	<strong>Next Billing:</strong>
+	{% if subscription.current_period_end %}
+		{{ subscription.current_period_end | int | datetime }}
+	{% else %}
+		Not available
+	{% endif %}
+	{% if subscription.trial_end %}
+		Trial ends on {{ subscription.trial_end | int | datetime }}
+	{% endif %}
+	</p>
 
     <p class="mt-2">
         <strong>Cancel at period end:</strong>

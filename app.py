@@ -1176,7 +1176,25 @@ def billing():
         try:
             subs = stripe.Subscription.list(customer=customer_id, limit=1)
             if subs.data:
-                subscription = subs.data[0].to_dict()   # ✅ FIX
+                sub = subs.data[0]
+
+                # convert to dict
+                sub_dict = sub.to_dict()
+
+                # 🔥 extract billing date safely
+                try:
+                    current_period_end = sub_dict["current_period_end"]
+                except KeyError:
+                    try:
+                        current_period_end = sub_dict["items"]["data"][0]["current_period_end"]
+                    except:
+                        current_period_end = None
+
+                subscription = {
+                    "status": sub_dict.get("status"),
+                    "cancel_at_period_end": sub_dict.get("cancel_at_period_end"),
+                    "current_period_end": current_period_end
+                }
         except Exception as e:
             print("Stripe error:", e)
 
