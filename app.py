@@ -1111,6 +1111,10 @@ def create_checkout_session():
 def success():
     return render_template("success.html")
     
+@app.template_filter('datetime')
+def format_datetime(value):
+    return datetime.fromtimestamp(value).strftime('%d %b %Y')    
+    
 @app.route("/api/verify-session")
 def verify_session():
 
@@ -1143,6 +1147,7 @@ def verify_session():
         print("❌ Verify error:", str(e))
         return {"error": "Verification failed"}, 500    
 
+
 @app.route("/billing")
 @login_required
 def billing():
@@ -1171,7 +1176,7 @@ def billing():
         try:
             subs = stripe.Subscription.list(customer=customer_id, limit=1)
             if subs.data:
-                subscription = subs.data[0]
+                subscription = subs.data[0].to_dict()   # ✅ FIX
         except Exception as e:
             print("Stripe error:", e)
 
@@ -1407,7 +1412,8 @@ def stripe_webhook():
 @app.route("/billing-portal")
 @login_required
 def billing_portal():
-
+    
+    
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -1431,9 +1437,7 @@ def billing_portal():
 
     return redirect(portal.url)
 
-@app.template_filter('datetime')
-def format_datetime(value):
-    return datetime.fromtimestamp(value).strftime('%d %b %Y')
+
 
   
 
