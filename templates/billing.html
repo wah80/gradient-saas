@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Billing</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body {
+    background: radial-gradient(circle at top, #0f172a, #020617);
+}
+</style>
+
+</head>
+
+<body class="text-white min-h-screen p-10">
+
+<div class="max-w-5xl mx-auto">
+
+```
+<!-- 🔝 Header -->
+<div class="flex justify-between items-center mb-10">
+    <h1 class="text-3xl font-bold">Billing & Subscription</h1>
+    <a href="/dashboard" class="text-gray-400 hover:text-white">← Back</a>
+</div>
+
+<!-- ⚠ Payment failed -->
+{% if payment_failed %}
+<div class="bg-red-500/10 border border-red-500 p-4 rounded-lg mb-6">
+    ⚠ Payment failed. Please update your billing info.
+</div>
+{% endif %}
+
+<!-- 💎 Plan Card -->
+<div class="bg-white/5 backdrop-blur-xl p-6 rounded-xl mb-6 shadow-lg">
+    <h2 class="text-xl mb-2">Current Plan</h2>
+    <p class="text-3xl font-bold">
+        {{ plan|upper }}
+    </p>
+    <p class="text-gray-400 mt-2">{{ email }}</p>
+</div>
+
+<!-- 📊 Subscription Info -->
+{% if subscription %}
+<div class="bg-white/5 p-6 rounded-xl mb-6">
+
+    <h2 class="text-xl mb-4">Subscription Details</h2>
+
+    <p><strong>Status:</strong> {{ subscription.status }}</p>
+
+    <p class="mt-2">
+        <strong>Next Billing:</strong>
+        {{ subscription.current_period_end | int | datetime }}
+    </p>
+
+    <p class="mt-2">
+        <strong>Cancel at period end:</strong>
+        {{ subscription.cancel_at_period_end }}
+    </p>
+
+</div>
+{% endif %}
+
+<!-- 💳 Actions -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+    <a href="/billing-portal"
+       class="bg-indigo-600 hover:bg-indigo-700 p-4 rounded-xl text-center">
+       Manage Billing
+    </a>
+
+    <a href="/create-checkout-session"
+       class="bg-green-600 hover:bg-green-700 p-4 rounded-xl text-center">
+       Upgrade Plan
+    </a>
+
+    <a href="/pricing"
+       class="bg-gray-700 hover:bg-gray-800 p-4 rounded-xl text-center">
+       View Plans
+    </a>
+
+</div>
+```
+
+</div>
+
+</body>
+</html>

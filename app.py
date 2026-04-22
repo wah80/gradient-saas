@@ -14,6 +14,7 @@ import json
 from flask import abort
 import re
 import stripe
+from datetime import datetime
 
 
 
@@ -1142,6 +1143,47 @@ def verify_session():
         print("❌ Verify error:", str(e))
         return {"error": "Verification failed"}, 500    
 
+@app.route("/billing")
+@login_required
+def billing():
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT email, plan, stripe_customer_id, payment_failed
+        FROM users WHERE id=%s
+    """, (session["user_id"],))
+
+    user = cursor.fetchone()
+
+    conn.close()
+
+    if not user:
+        return redirect("/dashboard")
+
+    email, plan, customer_id, payment_failed = user
+
+    subscription = None
+
+    # 🔥 Fetch Stripe subscription
+    if customer_id:
+        try:
+            subs = stripe.Subscription.list(customer=customer_id, limit=1)
+            if subs.data:
+                subscription = subs.data[0]
+        except Exception as e:
+            print("Stripe error:", e)
+
+    return render_template(
+        "billing.html",
+        email=email,
+        plan=plan,
+        subscription=subscription,
+        payment_failed=payment_failed
+    )
+
+
 @csrf.exempt
 @app.route("/stripe-webhook", methods=["POST"])
 def stripe_webhook():
@@ -1389,6 +1431,9 @@ def billing_portal():
 
     return redirect(portal.url)
 
+@app.template_filter('datetime')
+def format_datetime(value):
+    return datetime.fromtimestamp(value).strftime('%d %b %Y')
 
   
 
