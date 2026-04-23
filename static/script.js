@@ -1,11 +1,12 @@
-let dragged = null;
 let gradientType = "linear";
 let currentAngle = 45;
 let currentPalette = [];
 let editingPaletteId = null;
 let fadeTimeout;
 
-
+window.onerror = function(msg, url, line){
+    console.error("JS ERROR:", msg, "at", line);
+};
 
 // Add Color Picker
 function addColor(defaultColor="#ff0240"){
@@ -101,8 +102,8 @@ function updateAngle(){
 function generatePalette(){
 	
 	const preview = document.getElementById("gradientPreview");
+    if (!preview) return;
 
-    // 🔥 Fade out first
     preview.style.opacity = 0;
 
     let wrappers = document.querySelectorAll("#colorInputs > div");
@@ -226,15 +227,21 @@ function loadSettings(){
 
 // Update Gradient Function
 function updateGradientType(){
-    gradientType = document.getElementById("gradientType").value;
+
+    const typeEl = document.getElementById("gradientType");
+    if (!typeEl) return;
+
+    gradientType = typeEl.value;
+
+    const radialOptions = document.getElementById("radialOptions");
+    const radialCenter = document.getElementById("radialCenterOptions");
 
     if(gradientType === "radial"){
-        document.getElementById("radialOptions").style.display = "block";
-		document.getElementById("radialCenterOptions").style.display = "block";
-	
+        radialOptions && (radialOptions.style.display = "block");
+        radialCenter && (radialCenter.style.display = "block");
     } else {
-        document.getElementById("radialOptions").style.display = "none";
-		document.getElementById("radialCenterOptions").style.display = "none";
+        radialOptions && (radialOptions.style.display = "none");
+        radialCenter && (radialCenter.style.display = "none");
     }
 
     generatePalette();
@@ -472,42 +479,36 @@ function exportPNG(){
 }
 
 
-window.onload = function () {
+window.addEventListener("DOMContentLoaded", function () {
 
-    if (!document.getElementById("angleSlider")) return;
+    if (!document.getElementById("colorInputs")) return;
 
     loadSettings();
+	document.getElementById("addColorBtn")
+    ?.addEventListener("click", () => addColor());
 
     document.getElementById("angleSlider")
-        .addEventListener("input", updateAngle);
+        ?.addEventListener("input", updateAngle);
 
     document.getElementById("centerX")
         ?.addEventListener("input", generatePalette);
 
     document.getElementById("centerY")
         ?.addEventListener("input", generatePalette);
-	
-	document.getElementById("gradientType")
-		?.addEventListener("change", checkRadial);
-		
+
+    document.getElementById("gradientType")
+        ?.addEventListener("change", updateGradientType);
+
     loadPresets();
 
-    // ✅ If no colors exist, force defaults
+    // Default colors if empty
     if (document.querySelectorAll("#colorInputs > div").length === 0) {
         addColor("#ff0000");
         addColor("#0000ff");
         generatePalette();
     }
-	if(userPlan === "pro"){
-        document.querySelectorAll("#upgradeModal .btn-primary")
-            .forEach(btn => {
-                btn.innerText = "Current Plan";
-                btn.classList.remove("btn-primary");
-                btn.classList.add("btn-success");
-                btn.disabled = true;
-            });
-    }
-};
+
+});
 
 function deletePalette(id) {
 
@@ -556,8 +557,10 @@ function loadPaletteIntoBuilder(data) {
 
     gradientType = data.gradient_type;
     currentAngle = data.angle;
-
-    document.getElementById("gradientType").value = data.gradient_type;
+	
+	document.getElementById("centerX").value = data.center_x || 50;
+	document.getElementById("centerY").value = data.center_y || 50;
+	document.getElementById("gradientType").value = data.gradient_type;
     document.getElementById("angleSlider").value = data.angle;
     document.getElementById("angleValue").innerText = data.angle + "°";
 	document.getElementById("paletteName").value = data.name;
@@ -606,37 +609,17 @@ function showUpgradePopup(message = null){
         document.getElementById("upgradeMessage").innerText = message;
     }
 
-    const modal = new bootstrap.Modal(
-        document.getElementById("upgradeModal")
-    );
+    const modalEl = document.getElementById("upgradeModal");
+    const modal = new bootstrap.Modal(modalEl);
 
     modal.show();
-
-
 
     setTimeout(()=>{
         modalEl.querySelector(".btn-primary")?.focus();
     },300);
 }
 
-function checkRadial(e){
 
-    let selected = e.target.value;
-
-    if(selected === "radial" && userPlan === "free"){
-
-        showUpgradePopup();
-
-        // revert back to linear
-        e.target.value = "linear";
-        gradientType = "linear";
-
-        return;
-    }
-
-    gradientType = selected;
-    updateGradientType();
-}
 
 setInterval(() => {
     if (!editingPaletteId) {
