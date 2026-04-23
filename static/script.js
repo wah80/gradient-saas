@@ -1,11 +1,14 @@
+window.onerror = function(msg, url, line){
+    console.error("JS ERROR:", msg, "at", line);
+};
+
+let gradientType = "linear";
 let currentAngle = 45;
 let currentPalette = [];
 let editingPaletteId = null;
 let fadeTimeout;
 
-window.onerror = function(msg, url, line){
-    console.error("JS ERROR:", msg, "at", line);
-};
+
 
 // Add Color Picker
 function addColor(defaultColor="#ff0240"){
