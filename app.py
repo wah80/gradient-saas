@@ -126,6 +126,10 @@ def create_tables():
         id TEXT PRIMARY KEY
     );
     """)
+    cursor.execute("""
+    ALTER TABLE users ADD COLUMN onboarding_completed BOOLEAN DEFAULT FALSE;
+    );
+    """)
         
     conn.commit()
     conn.close()
@@ -442,9 +446,22 @@ def dashboard():
     user_plan = user[0]
     payment_failed = user[1]
     
+    cursor.execute("""
+        SELECT onboarding_completed, plan 
+        FROM users WHERE id=%s
+    """, (session["user_id"],))
+
+    user = cursor.fetchone()
+    onboarding_completed = user[0]
+    plan = user[1]
+
+    
     conn.close()
     # Plan limits
     palette_limit = 5 if user_plan == "free" else 9999
+    
+    if not onboarding_completed:
+        return redirect("/onboarding")
     
     return render_template(
     "dashboard.html",
@@ -1555,7 +1572,45 @@ def get_invoices():
         print("❌ Invoice error:", str(e))
         return []        
         
-        
+@app.route("/onboarding", methods=["GET", "POST"])
+@login_required
+def onboarding():
+
+    if request.method == "POST":
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            UPDATE users 
+            SET onboarding_completed=TRUE
+            WHERE id=%s
+        """, (session["user_id"],))
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/dashboard")
+
+    return render_template("onboarding.html")
+
+@app.route("/track-upgrade-click")
+@login_required
+def track_upgrade():
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE users 
+        SET upgrade_clicked=TRUE
+        WHERE id=%s
+    """, (session["user_id"],))
+
+    conn.commit()
+    conn.close()
+
+    return "", 204       
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
