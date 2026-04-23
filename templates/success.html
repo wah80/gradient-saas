@@ -108,7 +108,7 @@ fetch(`/api/verify-session?session_id=${sessionId}`)
         // 🔁 auto redirect after 5s
         setTimeout(() => {
             window.location.href = "/dashboard";
-        }, 5000);
+        }, 8000);
 
     } else {
         document.getElementById("error").classList.remove("hidden");

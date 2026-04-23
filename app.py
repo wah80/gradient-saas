@@ -1180,7 +1180,7 @@ def billing():
 
                 # convert to dict
                 sub_dict = sub.to_dict()
-
+                trial_end = sub_dict.get("trial_end")
                 # 🔥 extract billing date safely
                 try:
                     current_period_end = sub_dict["current_period_end"]
@@ -1455,9 +1455,107 @@ def billing_portal():
 
     return redirect(portal.url)
 
+@app.route("/cancel-subscription", methods=["POST"])
+@login_required
+def cancel_subscription():
 
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
-  
+    cursor.execute("""
+        SELECT stripe_subscription_id 
+        FROM users WHERE id=%s
+    """, (session["user_id"],))
+
+    sub = cursor.fetchone()
+    conn.close()
+
+    if not sub or not sub[0]:
+        return {"error": "No subscription"}, 400
+
+    try:
+        stripe.Subscription.modify(
+            sub[0],
+            cancel_at_period_end=True
+        )
+
+        return {"status": "cancel_scheduled"}
+
+    except Exception as e:
+        print("❌ Cancel error:", str(e))
+        return {"error": "Cancel failed"}, 500
+
+@app.route("/resume-subscription", methods=["POST"])
+@login_required
+def resume_subscription():
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT stripe_subscription_id 
+        FROM users WHERE id=%s
+    """, (session["user_id"],))
+
+    sub = cursor.fetchone()
+    conn.close()
+
+    if not sub or not sub[0]:
+        return {"error": "No subscription"}, 400
+
+    try:
+        stripe.Subscription.modify(
+            sub[0],
+            cancel_at_period_end=False
+        )
+
+        return {"status": "resumed"}
+
+    except Exception as e:
+        print("❌ Resume error:", str(e))
+        return {"error": "Resume failed"}, 500
+        
+@app.route("/api/invoices")
+@login_required
+def get_invoices():
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT stripe_customer_id 
+        FROM users WHERE id=%s
+    """, (session["user_id"],))
+
+    customer = cursor.fetchone()
+    conn.close()
+
+    if not customer or not customer[0]:
+        return []
+
+    try:
+        invoices = stripe.Invoice.list(
+            customer=customer[0],
+            limit=10
+        )
+
+        data = []
+
+        for inv in invoices.data:
+            data.append({
+                "amount": inv.amount_paid / 100,
+                "status": inv.status,
+                "date": inv.created,
+                "pdf": inv.invoice_pdf
+            })
+
+        return data
+
+    except Exception as e:
+        print("❌ Invoice error:", str(e))
+        return []        
+        
+        
 
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,

@@ -68,6 +68,90 @@ body {
 
 </div>
 {% endif %}
+<!-- ❌ Cancel / Resume -->
+
+<div class="bg-white/5 p-6 rounded-xl mb-6">
+
+```
+<h2 class="text-xl mb-4">Subscription Actions</h2>
+
+{% if subscription.cancel_at_period_end %}
+    <button onclick="resumeSub()"
+        class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
+        Resume Subscription
+    </button>
+{% else %}
+    <button onclick="cancelSub()"
+        class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">
+        Cancel Subscription
+    </button>
+{% endif %}
+```
+
+</div>
+
+<!-- 🧾 Invoice History -->
+
+<div class="bg-white/5 p-6 rounded-xl">
+
+```
+<h2 class="text-xl mb-4">Invoice History</h2>
+
+<table class="w-full text-left">
+    <thead>
+        <tr class="text-gray-400">
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="invoiceTable"></tbody>
+</table>
+```
+
+</div>
+
+<script>
+function cancelSub() {
+    fetch("/cancel-subscription", {method: "POST"})
+    .then(() => location.reload());
+}
+
+function resumeSub() {
+    fetch("/resume-subscription", {method: "POST"})
+    .then(() => location.reload());
+}
+
+// 🔥 Load invoices
+fetch("/api/invoices")
+.then(res => res.json())
+.then(data => {
+
+    const table = document.getElementById("invoiceTable");
+
+    data.forEach(inv => {
+
+        const date = new Date(inv.date * 1000).toLocaleDateString();
+
+        table.innerHTML += `
+            <tr class="border-t border-gray-700">
+                <td class="py-2">${date}</td>
+                <td>$${inv.amount}</td>
+                <td>${inv.status}</td>
+                <td>
+                    <a href="${inv.pdf}" target="_blank"
+                       class="text-blue-400 hover:underline">
+                       Download
+                    </a>
+                </td>
+            </tr>
+        `;
+    });
+
+});
+</script>
+
 
 <!-- 💳 Actions -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
