@@ -1568,7 +1568,7 @@ def get_invoices():
     except Exception as e:
         print("❌ Invoice error:", str(e))
         return []        
-        
+@csrf.exempt       
 @app.route("/onboarding", methods=["GET", "POST"])
 @login_required
 def onboarding():
