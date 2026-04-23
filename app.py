@@ -127,8 +127,8 @@ def create_tables():
     );
     """)
     cursor.execute("""
-        ALTER TABLE users ADD COLUMN onboarding_completed BOOLEAN DEFAULT FALSE
-    );
+    ALTER TABLE users ADD COLUMN onboarding_completed BOOLEAN DEFAULT FALSE;
+
     """)
         
     conn.commit()
