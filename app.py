@@ -126,9 +126,9 @@ def create_tables():
         id TEXT PRIMARY KEY
     );
     """)
+    
     cursor.execute("""
     ALTER TABLE users ADD COLUMN onboarding_completed BOOLEAN DEFAULT FALSE;
-
     """)
         
     conn.commit()
