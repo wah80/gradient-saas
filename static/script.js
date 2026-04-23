@@ -1,4 +1,3 @@
-let gradientType = "linear";
 let currentAngle = 45;
 let currentPalette = [];
 let editingPaletteId = null;
