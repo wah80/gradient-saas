@@ -12,7 +12,7 @@ console.log("JS Loaded ✅");
 console.log("Add color clicked");
 
 // Add Color Picker
-function addColorBtn(defaultColor="#ff0240"){
+function addColor(defaultColor="#ff0240"){
 
     let wrapper = document.createElement("div");
     wrapper.style.display = "inline-block";
