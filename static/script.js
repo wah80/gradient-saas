@@ -8,7 +8,8 @@ let currentPalette = [];
 let editingPaletteId = null;
 let fadeTimeout;
 
-
+console.log("JS Loaded ✅");
+console.log("Add color clicked");
 
 // Add Color Picker
 function addColorBtn(defaultColor="#ff0240"){
@@ -481,11 +482,19 @@ function exportPNG(){
 }
 
 
-window.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
 
     if (!document.getElementById("colorInputs")) return;
 
     loadSettings();
+	document.querySelectorAll("[data-add-color]")
+    .forEach(btn => btn.addEventListener("click", addColor));
+
+	document.querySelectorAll("[data-reverse]")
+    .forEach(btn => btn.addEventListener("click", reverseColors));
+
+	document.querySelectorAll("[data-save]")
+    .forEach(btn => btn.addEventListener("click", savePalette));
 	document.getElementById("addColorBtn")
     ?.addEventListener("click", () => addColor());
 
@@ -499,16 +508,19 @@ window.addEventListener("DOMContentLoaded", function () {
         ?.addEventListener("input", generatePalette);
 
     document.getElementById("gradientType")
-        ?.addEventListener("change", updateGradientType);
+    ?.addEventListener("change", function(e){
+        checkRadial(e);
+        updateGradientType();
+    });
 
     loadPresets();
 
     // Default colors if empty
     if (document.querySelectorAll("#colorInputs > div").length === 0) {
-        addColor("#ff0000");
-        addColor("#0000ff");
-        generatePalette();
-    }
+		addColor("#ff0000");
+		addColor("#0000ff");
+		generatePalette();
+	}
 
 });
 
@@ -557,26 +569,26 @@ function editPalette(id) {
 
 function loadPaletteIntoBuilder(data) {
 
-    gradientType = data.gradient_type;
-    currentAngle = data.angle;
-	
-	document.getElementById("centerX").value = data.center_x || 50;
-	document.getElementById("centerY").value = data.center_y || 50;
-	document.getElementById("gradientType").value = data.gradient_type;
-    document.getElementById("angleSlider").value = data.angle;
-    document.getElementById("angleValue").innerText = data.angle + "°";
-	document.getElementById("paletteName").value = data.name;
+    editingPaletteId = data.id;
+
+    document.getElementById("paletteName").value = data.name;
     document.getElementById("editStatus").innerText = "Editing: " + data.name;
 
-    updateGradientType(); // important
-
     document.getElementById("colorInputs").innerHTML = "";
-	
+
+    gradientType = data.gradient_type;
+    currentAngle = data.angle;
+
+    document.getElementById("gradientType").value = data.gradient_type;
+    document.getElementById("angleSlider").value = data.angle;
+
+    updateGradientType(); // MUST before colors
 
     data.colors.forEach(color => addColor(color));
 
-    generatePalette();
+    setTimeout(() => generatePalette(), 50); // 🔥 important
 }
+
 
 function cancelEdit() {
 
