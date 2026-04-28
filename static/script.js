@@ -11,7 +11,7 @@ let fadeTimeout;
 
 
 // Add Color Picker
-function addColor(defaultColor="#ff0240"){
+function addColorBtn(defaultColor="#ff0240"){
 
     let wrapper = document.createElement("div");
     wrapper.style.display = "inline-block";
