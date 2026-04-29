@@ -2,7 +2,7 @@ window.onerror = function(msg, url, line){
     console.error("JS ERROR:", msg, "at", line);
 };
 
-let gradientType = "linear";
+
 let currentAngle = 45;
 let currentPalette = [];
 let editingPaletteId = null;
