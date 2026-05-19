@@ -1,16 +1,17 @@
-window.onerror = function(msg, url, line){
-    console.error("JS ERROR:", msg, "at", line);
-};
-
-
+let dragged = null;
+let gradientType = "linear";
 let currentAngle = 45;
 let currentPalette = [];
 let editingPaletteId = null;
-let fadeTimeout;
+let upgradeModal = null;
 
-console.log("JS Loaded ✅");
-console.log("Add color clicked");
 
+
+
+
+function safeGet(id) {
+    return document.getElementById(id);
+}
 // Add Color Picker
 function addColor(defaultColor="#ff0240"){
 
@@ -87,6 +88,7 @@ function addColor(defaultColor="#ff0240"){
     wrapper.appendChild(removeBtn);
 
     document.getElementById("colorInputs").appendChild(wrapper);
+	
 }
 
 
@@ -103,126 +105,176 @@ function updateAngle(){
 
 // Generate Gradient from ALL colors
 function generatePalette(){
-	
-	const preview = document.getElementById("gradientPreview");
-    if (!preview) return;
+
+    const preview = safeGet("gradientPreview");
+    if(!preview) return;
 
     preview.style.opacity = 0;
 
     let wrappers = document.querySelectorAll("#colorInputs > div");
 
-	currentPalette = [];
-
-	wrappers.forEach(wrapper=>{
-    let input = wrapper.querySelector("input");
-    currentPalette.push(input.value);
-	});	
-
-    
-    setTimeout(() => {
-
-    let gradient;
-
-    if(gradientType === "linear"){
-
-        gradient = `linear-gradient(${currentAngle}deg, ${currentPalette.join(",")})`;
-
-    } else {
-
-        let shape = document.getElementById("radialShape").value;
-		let centerX = document.getElementById("centerX").value;
-		let centerY = document.getElementById("centerY").value;
-
-		gradient = `radial-gradient(${shape} at ${centerX}% ${centerY}%, ${currentPalette.join(",")})`;
-    }
-		
-        // 🔥 Fade back in
-        preview.style.opacity = 1;
-
-    
-
-    // Apply preview
-    document.getElementById("gradientPreview").style.background = gradient;
-
-    // Update CSS code
-    let cssText = `background: ${gradient};`;
-    document.getElementById("cssCode").innerText = cssText;
-	if (!editingPaletteId) {
-    saveSettings();
-}
-	}, 150); // half of transition time
-}	
-// Save Settings For Gradient
-function saveSettings(){
-
-    const gradientTypeEl = document.getElementById("gradientType");
-    const angleSliderEl = document.getElementById("angleSlider");
-    const colorInputsEl = document.getElementById("colorInputs");
-
-    // If not on gradient page, exit safely
-    if (!gradientTypeEl || !angleSliderEl || !colorInputsEl) {
-        return;
-    }
-
-    let type = gradientTypeEl.value;
-    let angle = angleSliderEl.value;
-
-    let wrappers = document.querySelectorAll("#colorInputs > div");
-    let colors = [];
+    currentPalette = [];
 
     wrappers.forEach(wrapper=>{
         let input = wrapper.querySelector("input");
-        if (input) {
-            colors.push(input.value);
-        }
+        if(input) currentPalette.push(input.value);
     });
 
-    let settings = {
-        type: type,
-        angle: angle,
-        shape: document.getElementById("radialShape")?.value || "circle",
+    setTimeout(() => {
+
+        let gradient;
+
+        if(gradientType === "linear"){
+            gradient = `linear-gradient(${currentAngle}deg, ${currentPalette.join(",")})`;
+        } else {
+
+            const shape = safeGet("radialShape")?.value || "circle";
+            const centerX = safeGet("centerX")?.value || 50;
+            const centerY = safeGet("centerY")?.value || 50;
+
+            gradient = `radial-gradient(${shape} at ${centerX}% ${centerY}%, ${currentPalette.join(",")})`;
+        }
+		preview.style.background = gradient;
+		preview.style.opacity = 1;
+
+        if(safeGet("cssCode"))
+            safeGet("cssCode").innerText = `background: ${gradient};`;
+
+        if (!editingPaletteId) {
+            saveSettings();
+        }
+
+    }, 150);
+}
+// Save Settings For Gradient
+function saveSettings(){
+
+    const angleSliderEl =
+        document.getElementById("angleSlider");
+
+    const colorInputsEl =
+        document.getElementById("colorInputs");
+
+    if(!angleSliderEl || !colorInputsEl){
+        return;
+    }
+
+    const colors = [];
+
+    document.querySelectorAll("#colorInputs input")
+    .forEach(input => {
+        colors.push(input.value);
+    });
+
+    const settings = {
+        type: gradientType,
+        angle: currentAngle,
+        shape:
+            document.getElementById("radialShape")?.value
+            || "circle",
         colors: colors
     };
 
-    localStorage.setItem("gradientSettings", JSON.stringify(settings));
+    localStorage.setItem(
+        "gradientSettings",
+        JSON.stringify(settings)
+    );
 }
 // Load Settings function
 function loadSettings(){
 
-    let saved = localStorage.getItem("gradientSettings");
+    const saved = localStorage.getItem("gradientSettings");
+
     if(!saved) return;
 
-    let settings = JSON.parse(saved);
+    let settings;
 
-    // Set gradient type
-    gradientType = settings.type;
-    document.getElementById("gradientType").value = settings.type;
+    try{
+        settings = JSON.parse(saved);
+    }catch(err){
+        console.error("Invalid saved settings");
+        return;
+    }
 
-    // Show radial options if needed
-	if(settings.shape){
-    document.getElementById("radialShape").value = settings.shape;
-	}
+    // SAFE TYPE
+    gradientType =
+        settings.type === "radial"
+        ? "radial"
+        : "linear";
+
+    // REMOVE ACTIVE
+    document.querySelectorAll(".switch-btn")
+    .forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    // SAFE SELECTOR
+    const activeBtn = document.querySelector(
+        `.switch-btn[data-type="${gradientType}"]`
+    );
+
+    if(activeBtn){
+        activeBtn.classList.add("active");
+    }
+
+    // SHAPE
+    const radialShape = document.getElementById("radialShape");
+
+    if(radialShape && settings.shape){
+        radialShape.value = settings.shape;
+    }
+
+    // RADIAL UI
+    const radialOptions =
+        document.getElementById("radialOptions");
+
+    const radialCenter =
+        document.getElementById("radialCenterOptions");
 
     if(gradientType === "radial"){
-        document.getElementById("radialOptions").style.display = "block";
-    } else {
-        document.getElementById("radialOptions").style.display = "none";
+        radialOptions?.style.setProperty("display","block");
+        radialCenter?.style.setProperty("display","block");
+    }else{
+        radialOptions?.style.setProperty("display","none");
+        radialCenter?.style.setProperty("display","none");
     }
-	
-    // Set angle
-    currentAngle = settings.angle;
-    let slider = document.getElementById("angleSlider");
-    slider.value = settings.angle;
 
-    document.getElementById("angleValue").innerText = settings.angle + "°";
+    // ANGLE
+    currentAngle = Number(settings.angle || 45);
 
-    // Clear old colors
-    document.getElementById("colorInputs").innerHTML = "";
+    const slider = document.getElementById("angleSlider");
 
-    // Add saved colors
-    settings.colors.forEach(color=>{
-        addColor(color);
-    });
+    if(slider){
+        slider.value = currentAngle;
+    }
+
+    const angleValue =
+        document.getElementById("angleValue");
+
+    if(angleValue){
+        angleValue.innerText = currentAngle + "°";
+    }
+
+    // COLORS
+    const colorInputs =
+        document.getElementById("colorInputs");
+
+    if(colorInputs){
+        colorInputs.innerHTML = "";
+    }
+
+    if(Array.isArray(settings.colors)){
+
+        settings.colors.forEach(color => {
+            addColor(color);
+        });
+
+    }else{
+
+        addColor("#ff0000");
+        addColor("#0000ff");
+
+    }
 
     generatePalette();
 }
@@ -231,21 +283,18 @@ function loadSettings(){
 // Update Gradient Function
 function updateGradientType(){
 
-    const typeEl = document.getElementById("gradientType");
-    if (!typeEl) return;
+    const radialOptions = safeGet("radialOptions");
+    const radialCenter = safeGet("radialCenterOptions");
 
-    gradientType = typeEl.value;
+    if(!radialOptions || !radialCenter) return;
 
-    const radialOptions = document.getElementById("radialOptions");
-    const radialCenter = document.getElementById("radialCenterOptions");
+    const isRadial = gradientType === "radial";
 
-    if(gradientType === "radial"){
-        radialOptions && (radialOptions.style.display = "block");
-        radialCenter && (radialCenter.style.display = "block");
-    } else {
-        radialOptions && (radialOptions.style.display = "none");
-        radialCenter && (radialCenter.style.display = "none");
-    }
+    radialOptions.style.display =
+        isRadial ? "block" : "none";
+
+    radialCenter.style.display =
+        isRadial ? "block" : "none";
 
     generatePalette();
 }
@@ -322,7 +371,7 @@ fetch(url, {
         showUpgradePopup()
         return;
     }
-
+	
     if (response.body.status === "success") {
 
         showToast(
@@ -482,47 +531,46 @@ function exportPNG(){
 }
 
 
-document.addEventListener("DOMContentLoaded", function () {
 
-    if (!document.getElementById("colorInputs")) return;
+
+window.onload = function () {
+	
+	const modalEl =
+        document.getElementById("upgradeModal");
+
+    if(modalEl){
+        upgradeModal =
+            bootstrap.Modal.getOrCreateInstance(modalEl);
+    }
+	
+    if (!safeGet("angleSlider")) return;
 
     loadSettings();
-	document.querySelectorAll("[data-add-color]")
-    .forEach(btn => btn.addEventListener("click", addColor));
 
-	document.querySelectorAll("[data-reverse]")
-    .forEach(btn => btn.addEventListener("click", reverseColors));
-
-	document.querySelectorAll("[data-save]")
-    .forEach(btn => btn.addEventListener("click", savePalette));
-	document.getElementById("addColorBtn")
-    ?.addEventListener("click", () => addColor());
-
-    document.getElementById("angleSlider")
+    safeGet("angleSlider")
         ?.addEventListener("input", updateAngle);
 
-    document.getElementById("centerX")
+    safeGet("centerX")
         ?.addEventListener("input", generatePalette);
 
-    document.getElementById("centerY")
+    safeGet("centerY")
         ?.addEventListener("input", generatePalette);
 
-    document.getElementById("gradientType")
-    ?.addEventListener("change", function(e){
-        checkRadial(e);
-        updateGradientType();
-    });
+    // DEFAULT COLORS
+    if (
+        document.querySelectorAll("#colorInputs > div")
+        .length === 0
+    ) {
+        addColor("#ff0000");
+        addColor("#0000ff");
+        generatePalette();
+    }
 
-    loadPresets();
+    updateGradientType();
+};
 
-    // Default colors if empty
-    if (document.querySelectorAll("#colorInputs > div").length === 0) {
-		addColor("#ff0000");
-		addColor("#0000ff");
-		generatePalette();
-	}
 
-});
+
 
 function deletePalette(id) {
 
@@ -569,26 +617,97 @@ function editPalette(id) {
 
 function loadPaletteIntoBuilder(data) {
 
-    editingPaletteId = data.id;
+    // SAFE TYPE
+    gradientType =
+        data.gradient_type === "radial"
+        ? "radial"
+        : "linear";
 
-    document.getElementById("paletteName").value = data.name;
-    document.getElementById("editStatus").innerText = "Editing: " + data.name;
+    // SAFE ANGLE
+    currentAngle = Number(data.angle || 45);
 
-    document.getElementById("colorInputs").innerHTML = "";
+    // REMOVE ACTIVE STATES
+    document.querySelectorAll(".switch-btn")
+    .forEach(btn => {
+        btn.classList.remove("active");
+    });
 
-    gradientType = data.gradient_type;
-    currentAngle = data.angle;
+    // SAFE BUTTON SELECT
+    const activeBtn = document.querySelector(
+        `.switch-btn[data-type="${gradientType}"]`
+    );
 
-    document.getElementById("gradientType").value = data.gradient_type;
-    document.getElementById("angleSlider").value = data.angle;
+    if(activeBtn){
+        activeBtn.classList.add("active");
+    }
 
-    updateGradientType(); // MUST before colors
+    // SLIDER
+    if(safeGet("angleSlider")){
+        safeGet("angleSlider").value = currentAngle;
+    }
 
-    data.colors.forEach(color => addColor(color));
+    // ANGLE LABEL
+    if(safeGet("angleValue")){
+        safeGet("angleValue").innerText =
+            currentAngle + "°";
+    }
 
-    setTimeout(() => generatePalette(), 50); // 🔥 important
+    // NAME
+    if(safeGet("paletteName")){
+        safeGet("paletteName").value =
+            data.name || "";
+    }
+
+    // STATUS
+    if(safeGet("editStatus")){
+        safeGet("editStatus").innerText =
+            "Editing: " + (data.name || "Palette");
+    }
+
+    // RADIAL SHAPE
+    if(
+        safeGet("radialShape") &&
+        data.radial_shape
+    ){
+        safeGet("radialShape").value =
+            data.radial_shape;
+    }
+
+    // CENTER VALUES
+    if(safeGet("centerX")){
+        safeGet("centerX").value =
+            data.center_x || 50;
+    }
+
+    if(safeGet("centerY")){
+        safeGet("centerY").value =
+            data.center_y || 50;
+    }
+
+    // UPDATE UI
+    updateGradientType();
+
+    // RESET COLORS
+    if(safeGet("colorInputs")){
+        safeGet("colorInputs").innerHTML = "";
+    }
+
+    // SAFE COLORS
+    if(Array.isArray(data.colors)){
+
+        data.colors.forEach(color => {
+            addColor(color);
+        });
+
+    } else {
+
+        addColor("#ff0000");
+        addColor("#0000ff");
+
+    }
+
+    generatePalette();
 }
-
 
 function cancelEdit() {
 
@@ -606,34 +725,121 @@ function cancelEdit() {
 	loadSettings();
 }
 
-function showToast(message, type="primary"){
+function showToast(message, type = "success") {
 
-    let toastEl = document.getElementById("liveToast");
-    let toastMsg = document.getElementById("toastMessage");
+    const toastEl = document.getElementById("liveToast");
+    const toastMsg = document.getElementById("toastMessage");
 
-    toastEl.className = `toast align-items-center text-bg-${type} border-0`;
-    toastMsg.innerText = message;
-
-    let toast = new bootstrap.Toast(toastEl);
-    toast.show();
-}
-function showUpgradePopup(message = null){
-
-    if(message){
-        document.getElementById("upgradeMessage").innerText = message;
+    if (!toastEl || !toastMsg) {
+        console.error("Toast elements missing");
+        return;
     }
 
-    const modalEl = document.getElementById("upgradeModal");
-    const modal = new bootstrap.Modal(modalEl);
+    toastMsg.innerText = message;
 
-    modal.show();
+    toastEl.className =
+        `toast align-items-center text-bg-${type} border-0`;
 
-    setTimeout(()=>{
-        modalEl.querySelector(".btn-primary")?.focus();
-    },300);
+    const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+
+    toast.show();
 }
 
+function checkRadial(type){
 
+    // VALIDATE TYPE
+    if(type !== "linear" && type !== "radial"){
+        return;
+    }
+
+    // FREE USER BLOCK
+    if(type === "radial" && userPlan === "free"){
+
+        // REMOVE ACTIVE STATE
+        document.querySelectorAll(".switch-btn")
+        .forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+        // FORCE LINEAR ACTIVE
+        const linearBtn = document.querySelector(
+            '.switch-btn[data-type="linear"]'
+        );
+
+        if(linearBtn){
+            linearBtn.classList.add("active");
+        }
+
+        // FORCE SAFE STATE
+        gradientType = "linear";
+
+        // HIDE RADIAL UI
+        safeGet("radialOptions")?.style.setProperty(
+            "display",
+            "none"
+        );
+
+        safeGet("radialCenterOptions")?.style.setProperty(
+            "display",
+            "none"
+        );
+
+        // SHOW MODAL
+        setTimeout(() => {
+
+            showUpgradePopup("Radial gradients are available on Pro 🚀");
+
+        }, 50);
+
+        return;
+    }
+
+    // NORMAL FLOW
+    gradientType = type;
+
+    // RESET BUTTONS
+    document.querySelectorAll(".switch-btn")
+    .forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    // SAFE ACTIVE BUTTON
+    const activeBtn = document.querySelector(
+        `.switch-btn[data-type="${type}"]`
+    );
+
+    if(activeBtn){
+        activeBtn.classList.add("active");
+    }
+
+    updateGradientType();
+}
+function showUpgradeInline(){
+    document.getElementById("upgradeInline").classList.remove("hidden");
+}
+
+function showUpgradePopup(message = null){
+
+    const modalEl =
+        document.getElementById("upgradeModal");
+
+    if(!modalEl){
+        console.error("Modal element missing");
+        return;
+    }
+
+    const msg =
+        document.getElementById("upgradeMessage");
+
+    if(message && msg){
+        msg.innerText = message;
+    }
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(modalEl);
+
+    modal.show();
+}
 
 setInterval(() => {
     if (!editingPaletteId) {

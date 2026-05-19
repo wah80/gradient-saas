@@ -1,72 +1,611 @@
-body{
-    font-family: Arial;
-    background:#1e1e1e;
+/* =========================================
+   GLOBAL
+========================================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body.dashboard-body{
+    background:#0b1020;
     color:white;
-    text-align:center;
-    padding:30px;
+    font-family:Inter, sans-serif;
+    overflow-x:hidden;
 }
 
-.container{
-    max-width:900px;
-    margin:auto;
+/* =========================================
+   LAYOUT
+========================================= */
+
+.dashboard-layout{
+    display:flex;
+    min-height:100vh;
 }
 
-#colorInputs{
-    margin-bottom:20px;
+/* =========================================
+   SIDEBAR
+========================================= */
+
+.sidebar{
+    width:260px;
+    background:rgba(255,255,255,0.04);
+    backdrop-filter:blur(20px);
+    border-right:1px solid rgba(255,255,255,0.08);
+
+    padding:30px 20px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+
+    position:sticky;
+    top:0;
+    height:100vh;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:40px;
+}
+
+.sidebar-nav{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.nav-link{
+    color:#cfd3ff;
+    text-decoration:none;
+
+    padding:12px 16px;
+    border-radius:12px;
+
+    transition:0.25s ease;
+}
+
+.nav-link:hover{
+    background:rgba(255,255,255,0.08);
+    color:white;
+}
+
+.nav-link.active{
+    background:linear-gradient(
+        135deg,
+        #6d5dfc,
+        #46c2ff
+    );
+
+    color:white;
+}
+
+.logout-btn{
+    text-decoration:none;
+    color:#ff8b8b;
+
+    padding:12px 16px;
+
+    border-radius:12px;
+
+    transition:0.25s ease;
+}
+
+.logout-btn:hover{
+    background:rgba(255,255,255,0.08);
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+.main-content{
+    flex:1;
+    padding:40px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.dashboard-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:35px;
+}
+
+.dashboard-title{
+    font-size:32px;
+    font-weight:700;
+}
+
+.dashboard-subtitle{
+    color:#9aa3c7;
+    margin-top:5px;
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+/* =========================================
+   BADGES / BUTTONS
+========================================= */
+
+.plan-badge{
+    background:rgba(255,255,255,0.08);
+    padding:10px 18px;
+    border-radius:999px;
+    font-size:14px;
+}
+
+.upgrade-btn,
+.primary-btn{
+    background:linear-gradient(
+        135deg,
+        #7b61ff,
+        #00c6ff
+    );
+
+    border:none;
+    color:white;
+
+    padding:12px 20px;
+
+    border-radius:14px;
+
+    text-decoration:none;
+    cursor:pointer;
+
+    transition:0.25s ease;
+}
+
+.upgrade-btn:hover,
+.primary-btn:hover{
+    transform:translateY(-2px);
+    opacity:0.92;
+}
+
+.secondary-btn{
+    background:rgba(255,255,255,0.08);
+    color:white;
+    border:none;
+
+    padding:12px 20px;
+    border-radius:14px;
+
+    transition:0.25s ease;
+}
+
+.secondary-btn:hover{
+    background:rgba(255,255,255,0.14);
+}
+
+.danger-btn{
+    background:#ff5b5b;
+    color:white;
+    border:none;
+
+    padding:12px 20px;
+    border-radius:14px;
+}
+
+/* =========================================
+   APP LAYOUT
+========================================= */
+
+.app-layout{
+    display:grid;
+    grid-template-columns:1.3fr 0.8fr;
+    gap:25px;
+
+    margin-bottom:40px;
+}
+
+/* =========================================
+   CARDS
+========================================= */
+
+.preview-card,
+.controls-card,
+.code-card,
+.action-card,
+.settings-card,
+.usage-card{
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    border-radius:24px;
+
+    padding:24px;
+
+    backdrop-filter:blur(20px);
+}
+
+/* =========================================
+   PREVIEW
+========================================= */
+
+#gradientPreview{
+    width:100%;
+    height:360px;
+
+    border-radius:22px;
+
+    transition:0.3s ease;
+
+    box-shadow:
+    0 20px 50px rgba(0,0,0,0.35);
+}
+
+/* =========================================
+   CONTROLS
+========================================= */
+
+.controls-section{
+    margin-top:20px;
+}
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:18px;
+}
+
+.color-inputs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
 }
 
 .color-input{
-    margin:5px;
-}
+    width:70px;
+    height:70px;
 
-.palette{
-    display:flex;
-    justify-content:center;
-    margin-top:10px;
-}
-
-.palette div{
-    width:50px;
-    height:50px;
-}
-
-.saved-box{
-    background:#2a2a2a;
-    padding:10px;
-    margin-top:10px;
-    border-radius:10px;
-}
-
-button{
-    padding:8px 15px;
-    margin:5px;
     border:none;
-    border-radius:6px;
+    background:none;
     cursor:pointer;
-	background: linear-gradient(45deg, #1668c0,#2c5987,#536f8d,#99afc7);
-
-
-}
-#gradientPreview {
-    transition: opacity 0.25s ease-in-out;
 }
 
-.editing-mode {
-    border: 2px solid orange;
-    padding: 15px;
-    border-radius: 8px;
-    background-color: #fff8e1;
+/* =========================================
+   SWITCH
+========================================= */
+
+.gradient-switch{
+    display:flex;
+    gap:10px;
 }
 
-.fade-in {
-    animation: fadeIn 0.3s ease-in-out;
+.switch-btn{
+    flex:1;
+
+    background:rgba(255,255,255,0.06);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    color:white;
+
+    padding:12px;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    transition:0.25s ease;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
+.switch-btn.active{
+    background:linear-gradient(
+        135deg,
+        #7b61ff,
+        #00c6ff
+    );
 }
 
-.username {
-    color: #f56666;
-    font-weight: bold;	
+.switch-btn:hover{
+    transform:translateY(-2px);
+}
+
+.pro-lock{
+    opacity:0.8;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.control-label{
+    display:block;
+    margin-bottom:10px;
+    font-weight:600;
+}
+
+.form-control,
+.form-select{
+    background:rgba(255,255,255,0.08) !important;
+    border:none!important;
+    color:black !important;
+
+    border-radius:14px;
+    padding:14px;
+}
+
+.form-control::placeholder{
+    color:#aaa;
+}
+
+/* =========================================
+   CODE
+========================================= */
+
+pre{
+    margin:0;
+}
+
+#cssCode{
+    color:#8be9fd;
+    font-size:14px;
+    white-space:pre-wrap;
+}
+
+.copy-btn{
+    background:#20253f;
+    border:none;
+    color:white;
+
+    padding:8px 14px;
+    border-radius:12px;
+}
+
+/* =========================================
+   PUBLIC TOGGLE
+========================================= */
+
+.public-toggle{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    cursor:pointer;
+}
+
+/* =========================================
+   USAGE
+========================================= */
+
+.usage-bar{
+    width:100%;
+    height:10px;
+
+    background:rgba(255,255,255,0.08);
+
+    border-radius:999px;
+
+    overflow:hidden;
+}
+
+.usage-fill{
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        #7b61ff,
+        #00c6ff
+    );
+}
+
+/* =========================================
+   INLINE UPGRADE
+========================================= */
+
+.upgrade-inline{
+    margin-top:20px;
+
+    padding:16px;
+
+    border-radius:18px;
+
+    background:rgba(123,97,255,0.12);
+
+    color:#d8d5ff;
+}
+
+.upgrade-inline a{
+    color:white;
+    font-weight:700;
+    text-decoration:none;
+}
+
+/* =========================================
+   SAVED PALETTES
+========================================= */
+
+.saved-section{
+    margin-top:30px;
+}
+
+.palette-grid{
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fill,minmax(240px,1fr));
+
+    gap:20px;
+}
+
+.palette-card{
+    background:rgba(255,255,255,0.05);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    transition:0.25s ease;
+}
+
+.palette-card:hover{
+    transform:translateY(-4px);
+}
+
+.palette-preview{
+    height:140px;
+}
+
+.palette-content{
+    padding:18px;
+}
+
+.palette-name{
+    margin-bottom:14px;
+}
+
+.palette-actions{
+    display:flex;
+    gap:10px;
+}
+
+.small-btn{
+    flex:1;
+
+    border:none;
+
+    padding:10px;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,0.08);
+
+    color:white;
+}
+
+.small-btn.danger{
+    background:#ff5b5b;
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-state{
+    text-align:center;
+
+    padding:60px;
+
+    background:rgba(255,255,255,0.05);
+
+    border-radius:24px;
+}
+
+/* =========================================
+   EDIT STATUS
+========================================= */
+
+.edit-status{
+    color:#ffd166;
+    font-weight:600;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media(max-width:1100px){
+
+    .app-layout{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:900px){
+
+    .dashboard-layout{
+        flex-direction:column;
+    }
+
+    .sidebar{
+        width:100%;
+        height:auto;
+        position:relative;
+    }
+
+    .main-content{
+        padding:20px;
+    }
+
+    .dashboard-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:20px;
+    }
+
+}
+
+.modal-backdrop.show{
+    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.55);
+}
+
+.modal{
+    z-index: 1055;
+}
+
+.modal-backdrop{
+    z-index: 1050;
+}
+
+body.modal-open{
+    overflow: hidden;
+}
+
+.switch-btn.active{
+    background: linear-gradient(
+        135deg,
+        #6d5dfc,
+        #8c7bff
+    );
+    color: white;
+    border-color: transparent;
+}
+
+.switch-btn{
+    transition: all .25s ease;
+}
+
+
+/* =========================================
+   Button Login Screen
+========================================= */
+
+.btn {
+    border-radius: 10px;
+    padding: 8px 14px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg,#6366f1,#9333ea);
+    color: gray;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: gray;
+}
+
+.btn-secondary {
+    background: #334155;
+    color: gray;
+}

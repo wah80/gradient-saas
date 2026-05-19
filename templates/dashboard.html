@@ -1,274 +1,595 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-{% block content %}
+    <title>Dashboard • Gradient SaaS</title>
 
-<meta name="csrf-token" content="{{ csrf_token() }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <!-- Bootstrap CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
-<style>
-body {
-    background: #0f172a;
-    color: #e2e8f0;
-    font-family: 'Inter', sans-serif;
-}
+    <!-- Main CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
 
-/* Layout */
-.dashboard {
-    display: flex;
-    min-height: 100vh;
-}
+<body class="dashboard-body">
 
-/* Sidebar */
-.sidebar {
-    width: 240px;
-    background: #020617;
-    padding: 20px;
-    border-right: 1px solid #1e293b;
-}
+<div class="dashboard-layout">
 
-.sidebar h2 {
-    color: white;
-    font-size: 20px;
-    margin-bottom: 30px;
-}
-
-.sidebar a {
-    display: block;
-    color: #94a3b8;
-    text-decoration: none;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    transition: 0.2s;
-}
-
-.sidebar a:hover {
-    background: #1e293b;
-    color: white;
-}
-
-/* Main */
-.main {
-    flex: 1;
-    padding: 30px;
-}
-
-/* Header */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.plan-badge {
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: {% if user_plan == "pro" %}#16a34a{% else %}#334155{% endif %};
-}
-
-/* Cards */
-.card {
-    background: #020617;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 1px solid #1e293b;
-}
-
-/* Gradient preview */
-#gradientPreview {
-    height: 250px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-}
-
-/* Buttons */
-.btn {
-    border-radius: 10px;
-    padding: 8px 14px;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg,#6366f1,#9333ea);
-    color: white;
-}
-
-.btn-danger {
-    background: #ef4444;
-    color: white;
-}
-
-.btn-secondary {
-    background: #334155;
-    color: white;
-}
-
-/* Palette Grid */
-.palette-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-    gap: 15px;
-}
-
-.palette-card {
-    background: #020617;
-    padding: 10px;
-    border-radius: 12px;
-    border: 1px solid #1e293b;
-}
-
-.palette-preview {
-    height: 60px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-}
-
-/* Progress */
-.progress-bar {
-    height: 8px;
-    background: #1e293b;
-    border-radius: 999px;
-    overflow: hidden;
-}
-
-.progress-inner {
-    height: 100%;
-    background: linear-gradient(90deg,#22c55e,#4ade80);
-}
-</style>
-
-<div class="dashboard">
-
-```
-<!-- SIDEBAR -->
-<div class="sidebar">
-    <h2>🎨 Gradient SaaS</h2>
-
-    <a href="/dashboard">Dashboard</a>
-    <a href="/top-gradients">Explore</a>
-    <a href="/billing">Billing</a>
-    <a href="/api-docs">API</a>
-    <a href="/logout">Logout</a>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-    <!-- HEADER -->
-    <div class="header">
-        <h3>Hello, {{ username }} 👋</h3>
+    <!-- ===================================== -->
+    <!-- SIDEBAR -->
+    <!-- ===================================== -->
+    <aside class="sidebar">
 
         <div>
-            <span class="plan-badge">{{ user_plan|upper }}</span>
+            <h2 class="logo">🎨 Gradient SaaS</h2>
 
-            {% if user_plan == "free" %}
-            <a href="/create-checkout-session" class="btn btn-primary ms-2">
-                Upgrade 🚀
-            </a>
-            {% endif %}
+            <nav class="sidebar-nav">
+
+                <a href="/dashboard" class="nav-link active">
+                    Dashboard
+                </a>
+
+                <a href="/top-gradients" class="nav-link">
+                    Explore
+                </a>
+
+                <a href="/billing" class="nav-link">
+                    Billing
+                </a>
+
+                <a href="/api-docs" class="nav-link">
+                    API
+                </a>
+
+            </nav>
         </div>
-    </div>
 
-    <!-- BUILDER -->
-    <div class="card">
+        <a href="/logout" class="logout-btn">
+            Logout
+        </a>
 
-        <h4>Gradient Builder</h4>
+    </aside>
 
-        <div id="gradientPreview"></div>
+    <!-- ===================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ===================================== -->
+    <main class="main-content">
 
-        <div class="mb-2">
-				<button data-add-color class="btn btn-primary">➕ Add Color</button>
-				<button data-reverse class="btn btn-warning">Reverse</button>
-				<button data-save class="btn btn-success">Save</button>
-				<button class="btn custom-btn">Save</button>
+        <!-- HEADER -->
+        <div class="dashboard-header">
+
+            <div>
+                <h1 class="dashboard-title">
+                    Welcome back, {{ username }} 👋
+                </h1>
+
+                <p class="dashboard-subtitle">
+                    Build beautiful gradients instantly.
+                </p>
+            </div>
+
+            <div class="header-actions">
+
+                <span class="plan-badge">
+                    {{ user_plan|upper }}
+                </span>
+
+                {% if user_plan == "free" %}
+                <a href="/create-checkout-session"
+                   class="upgrade-btn">
+                    Upgrade 🚀
+                </a>
+                {% endif %}
+
+            </div>
+
         </div>
 
-        <select id="gradientType" class="form-select mb-2">
-            <option value="linear">Linear</option>
-            {% if user_plan == "pro" %}
-            <option value="radial">Radial</option>
+        <!-- ===================================== -->
+        <!-- BUILDER -->
+        <!-- ===================================== -->
+        <section class="app-layout">
+
+            <!-- LEFT -->
+            <div class="builder-panel">
+
+                <!-- PREVIEW -->
+                <div id="builderSection">
+
+                    <div class="preview-card">
+                        <div id="gradientPreview"></div>
+                    </div>
+
+                </div>
+
+                <!-- COLOR INPUTS -->
+                <div class="controls-section">
+
+                    <div class="section-header">
+                        <h5>Colors</h5>
+
+                        <button onclick="addColor()"
+                                class="primary-btn">
+                            + Add Color
+                        </button>
+                    </div>
+
+                    <div id="colorInputs"
+                         class="color-inputs"></div>
+
+                </div>
+
+                <!-- CONTROLS -->
+                <div class="controls-card">
+
+                    <!-- TYPE -->
+                    <div class="mb-4">
+
+                        <label class="control-label">
+                            Gradient Type
+                        </label>
+
+                        <div id="gradientType" class="gradient-switch">
+
+							<button
+								type="button"
+								class="switch-btn active"
+								data-type="linear"
+								onclick="checkRadial('linear')">
+								Linear
+							</button>
+
+							{% if user_plan == "pro" %}
+
+							<button
+								type="button"
+								class="switch-btn"
+								data-type="radial"
+								onclick="checkRadial('radial')">
+								Radial
+							</button>
+
+							{% else %}
+
+							<button
+								type="button"
+								class="switch-btn pro-lock"
+								data-type="radial"> 
+								<a class="switch-btn pro-lock" href="/create-checkout-session">
+								Radial 🔒</a>
+							</button>
+
+							{% endif %}
+
+						</div>
+
+                    </div>
+
+                    <!-- ANGLE -->
+                    <div class="mb-4">
+
+                        <div class="d-flex justify-content-between">
+
+                            <label class="control-label">
+                                Angle
+                            </label>
+
+                            <span id="angleValue">
+                                45°
+                            </span>
+
+                        </div>
+
+                        <input type="range"
+                               id="angleSlider"
+                               min="0"
+                               max="360"
+                               value="45"
+                               class="form-range">
+
+                    </div>
+
+                    <!-- RADIAL OPTIONS -->
+                    <div id="radialOptions"
+                         style="display:none;">
+
+                        <label class="control-label">
+                            Shape
+                        </label>
+
+                        <select id="radialShape"
+                                class="form-select"
+                                onchange="generatePalette()">
+
+                            <option value="circle">
+                                Circle
+                            </option>
+
+                            <option value="ellipse">
+                                Ellipse
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- RADIAL CENTER -->
+                    <div id="radialCenterOptions"
+                         style="display:none;"
+                         class="mt-3">
+
+                        <label class="control-label">
+                            Center X
+                        </label>
+
+                        <input type="range"
+                               id="centerX"
+                               min="0"
+                               max="100"
+                               value="50"
+                               class="form-range">
+
+                        <label class="control-label mt-3">
+                            Center Y
+                        </label>
+
+                        <input type="range"
+                               id="centerY"
+                               min="0"
+                               max="100"
+                               value="50"
+                               class="form-range">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="output-panel">
+
+                <!-- CODE -->
+                <div class="code-card">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <h5 class="mb-0">
+                            CSS Code
+                        </h5>
+
+                        <button onclick="copyCSS()"
+                                class="copy-btn">
+                            Copy CSS
+                        </button>
+
+                    </div>
+
+                    <pre>
+<code id="cssCode"></code>
+                    </pre>
+
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="action-card">
+
+                    <button id="saveBtn"
+                            onclick="savePalette()"
+                            class="primary-btn w-100 mb-2">
+
+                        Save Palette
+
+                    </button>
+
+                    <button onclick="exportPNG()"
+                            class="secondary-btn w-100 mb-2">
+
+                        Export PNG
+
+                    </button>
+
+                    <button onclick="reverseColors()"
+                            class="secondary-btn w-100">
+
+                        Reverse Gradient
+
+                    </button>
+
+                    <!-- CANCEL EDIT -->
+                    <button id="cancelEditBtn"
+                            onclick="cancelEdit()"
+                            class="danger-btn w-100 mt-3"
+                            style="display:none;">
+
+                        Cancel Edit
+
+                    </button>
+
+                </div>
+
+                <!-- SAVE SETTINGS -->
+                <div class="settings-card">
+
+                    <h5 class="mb-3">
+                        Palette Settings
+                    </h5>
+
+                    <input type="text"
+                           id="paletteName"
+                           class="form-control mb-3"
+                           placeholder="Palette Name">
+
+                    <label class="public-toggle">
+
+                        <input type="checkbox"
+                               id="makePublic">
+
+                        <span>
+                            Make this palette public
+                        </span>
+
+                    </label>
+
+                    <div id="editStatus"
+                         class="edit-status mt-3">
+                    </div>
+
+                </div>
+
+                <!-- USAGE -->
+                <div class="usage-card">
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <span>Usage</span>
+
+                        <span>
+                            {{ palette_count }}/{{ palette_limit }}
+                        </span>
+
+                    </div>
+
+                    <div class="usage-bar">
+
+                        <div class="usage-fill"
+                             style="width: {{ (palette_count / palette_limit) * 100 }}%;">
+                        </div>
+
+                    </div>
+
+                    {% if user_plan == "free" %}
+
+                    <div class="upgrade-inline">
+
+                        Unlock unlimited palettes and radial gradients 🚀
+
+                        <a href="/create-checkout-session">
+                            Upgrade
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================== -->
+        <!-- SAVED PALETTES -->
+        <!-- ===================================== -->
+        <section class="saved-section">
+
+            <div class="section-header mb-4">
+
+                <h3>Saved Palettes</h3>
+
+            </div>
+
+            {% if palettes|length == 0 %}
+
+            <div class="empty-state">
+
+                <h3>No palettes yet</h3>
+
+                <p>
+                    Create your first gradient to get started.
+                </p>
+
+                <button onclick="addColor()"
+                        class="primary-btn">
+                    Create Gradient
+                </button>
+
+            </div>
+
             {% else %}
-            <option disabled>Radial (Pro)</option>
+
+            <div class="palette-grid">
+
+                {% for palette in palettes %}
+
+                <div class="palette-card">
+
+                    <div class="palette-preview"
+                         style="background: linear-gradient(45deg, {{ palette[8]|join(',') }});">
+                    </div>
+
+                    <div class="palette-content">
+
+                        <h6 class="palette-name">
+                            {{ palette[2] }}
+                        </h6>
+
+                        <div class="palette-actions">
+
+                            <button class="small-btn"
+                                    onclick="editPalette({{ palette[0] }})">
+
+                                Edit
+
+                            </button>
+
+                            <button class="small-btn danger"
+                                    onclick="deletePalette({{ palette[0] }})">
+
+                                Delete
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
             {% endif %}
-        </select>
 
-        <input type="range" id="angleSlider" min="0" max="360" value="45">
+        </section>
 
-        <div class="mt-2">
-            <code id="cssCode"></code>
-            <button class="btn btn-primary mt-2" onclick="copyCSS()">Copy CSS</button>
-        </div>
+    </main>
 
+</div>
+
+<!-- ===================================== -->
+<!-- Upgrade Model -->
+<!-- ===================================== -->
+<div class="modal-body p-4 text-center">
+   <div class="modal fade" id="upgradeModal" tabindex="-1">	
+  <h3 class="fw-bold mb-1">Unlock Pro Features 🚀</h3>
+
+  <p class="text-muted mb-2" id="upgradeMessage">
+    Create unlimited gradients & export like a pro
+  </p>
+
+  <!-- 🔥 URGENCY -->
+  <div class="badge bg-danger mb-3 px-3 py-2">
+    🔥 Limited Offer – $5/month
+  </div>
+
+  <!-- 💎 SOCIAL PROOF -->
+  <p class="small text-muted mb-4">
+    Trusted by <strong>1,200+ creators</strong>
+  </p>
+
+  <div class="row g-4 justify-content-center">
+
+    <!-- FREE -->
+    <div class="col-md-4">
+      <div class="plan-card">
+        <h6>Free</h6>
+        <h3>$0</h3>
+
+        <ul class="list-unstyled small mt-3 mb-3 text-start">
+          <li>✔ 5 palettes</li>
+          <li>✔ Basic gradients</li>
+          <li>❌ No exports</li>
+        </ul>
+
+        <button class="btn btn-outline-secondary w-100" disabled>
+          Current Plan
+        </button>
+      </div>
     </div>
 
-    <!-- SIDE INFO -->
-    <div class="card">
+    <!-- PRO (MAIN FOCUS) -->
+    <div class="col-md-4">
+      <div class="plan-card highlight scale-up">
 
-        <h5>Usage</h5>
+        <div class="badge bg-dark mb-2">Most Popular</div>
 
-        <div class="d-flex justify-content-between">
-            <span>{{ palette_count }} / {{ palette_limit }}</span>
-        </div>
+        <h6>Pro</h6>
+        <h2>$5<span class="small">/mo</span></h2>
 
-        <div class="progress-bar mt-2">
-            <div class="progress-inner" 
-                style="width: {{ (palette_count / palette_limit) * 100 }}%">
-            </div>
-        </div>
+        <ul class="list-unstyled small mt-3 mb-3 text-start">
+          <li>✔ Unlimited palettes</li>
+          <li>✔ Radial gradients</li>
+          <li>✔ CSS + PNG export</li>
+          <li>✔ Future premium tools</li>
+        </ul>
 
-        {% if payment_failed %}
-        <div class="mt-3" style="color:#ef4444;">
-            Payment failed ⚠️
-        </div>
-        {% endif %}
+        <!-- 🔥 MAIN CTA -->
+        <a href="/create-checkout-session"
+           class="btn btn-dark w-100 focus-target cta-btn">
+           Upgrade Now
+        </a>
 
+        <!-- 💎 RISK REDUCTION -->
+        <small class="text-muted d-block mt-2">
+          Cancel anytime • No hidden fees
+        </small>
+
+      </div>
     </div>
 
-    <!-- SAVED PALETTES -->
-    <div class="card">
+  </div>
 
-        <h4>Saved Palettes</h4>
+  <!-- 👇 SOFT EXIT -->
+  <button class="btn btn-link mt-4 close-btn"
+          data-bs-dismiss="modal"
+          onclick="document.activeElement.blur()">
+    Maybe later
+  </button>
 
-        <div class="palette-grid">
-            {% for palette in palettes %}
-            <div class="palette-card">
+</div>	
+	
+</div>
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
 
-                <div class="palette-preview"
-                    style="background: linear-gradient(45deg, {{ palette[8]|join(',') }});">
-                </div>
+    <div id="liveToast"
+         class="toast align-items-center border-0"
+         role="alert"
+         aria-live="assertive"
+         aria-atomic="true">
 
-                <small>{{ palette[2] }}</small>
+        <div class="d-flex">
 
-                <div class="mt-2">
-                    <button class="btn btn-secondary btn-sm"
-                        onclick="editPalette({{ palette[0] }})">Edit</button>
-
-                    <button class="btn btn-danger btn-sm"
-                        onclick="deletePalette({{ palette[0] }})">Delete</button>
-                </div>
-
+            <div id="toastMessage" class="toast-body">
+                Success
             </div>
-            {% endfor %}
+
+            <button type="button"
+                    class="btn-close btn-close-white me-2 m-auto"
+                    data-bs-dismiss="toast">
+            </button>
+
         </div>
 
     </div>
 
 </div>
-```
 
-</div>
 
+
+<!-- ===================================== -->
+<!-- SCRIPTS -->
+<!-- ===================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>  const userPlan = "{{ user_plan }}"; </script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 <script>
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
-const userPlan = "{{ user_plan }}";
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+
+   
+	
 </script>
 
-{% endblock %}
+</body>
+</html>
