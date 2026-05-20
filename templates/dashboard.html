@@ -160,9 +160,9 @@
 							<button
 								type="button"
 								class="switch-btn pro-lock"
-								data-type="radial"> 
-								<a class="switch-btn pro-lock" href="/create-checkout-session">
-								Radial 🔒</a>
+								data-type="radial" 
+								onclick="checkRadial('radial')">
+								Radial 🔒
 							</button>
 
 							{% endif %}
@@ -467,85 +467,152 @@
 <!-- ===================================== -->
 <!-- Upgrade Model -->
 <!-- ===================================== -->
-<div class="modal-body p-4 text-center">
-   <div class="modal fade" id="upgradeModal" tabindex="-1">	
-  <h3 class="fw-bold mb-1">Unlock Pro Features 🚀</h3>
 
-  <p class="text-muted mb-2" id="upgradeMessage">
-    Create unlimited gradients & export like a pro
-  </p>
 
-  <!-- 🔥 URGENCY -->
-  <div class="badge bg-danger mb-3 px-3 py-2">
-    🔥 Limited Offer – $5/month
-  </div>
+<div class="modal fade" id="upgradeModal" tabindex="-1" aria-hidden="true">
 
-  <!-- 💎 SOCIAL PROOF -->
-  <p class="small text-muted mb-4">
-    Trusted by <strong>1,200+ creators</strong>
-  </p>
+    <div class="modal-dialog modal-dialog-centered modal-lg">
 
-  <div class="row g-4 justify-content-center">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
-    <!-- FREE -->
-    <div class="col-md-4">
-      <div class="plan-card">
-        <h6>Free</h6>
-        <h3>$0</h3>
+            <!-- BODY -->
+            <div class="modal-body p-4 p-md-5 text-center">
 
-        <ul class="list-unstyled small mt-3 mb-3 text-start">
-          <li>✔ 5 palettes</li>
-          <li>✔ Basic gradients</li>
-          <li>❌ No exports</li>
-        </ul>
+                <!-- TITLE -->
+                <h3 class="fw-bold mb-2">
+                    Unlock Pro Features 🚀
+                </h3>
 
-        <button class="btn btn-outline-secondary w-100" disabled>
-          Current Plan
-        </button>
-      </div>
+                <!-- MESSAGE -->
+                <p class="text-muted mb-3" id="upgradeMessage">
+                    Create unlimited gradients & export like a pro
+                </p>
+
+                <!-- OFFER -->
+                <div class="badge bg-danger mb-4 px-3 py-2 fs-6">
+                    🔥 Limited Offer – $5/month
+                </div>
+
+                <!-- SOCIAL PROOF -->
+                <p class="small text-muted mb-4">
+                    Trusted by <strong>1,200+ creators</strong>
+                </p>
+
+                <!-- PLANS -->
+                <div class="row g-4 justify-content-center">
+
+                    <!-- FREE -->
+                    <div class="col-md-5">
+
+                        <div class="plan-card h-100 p-4 border rounded-4 bg-light-subtle">
+
+                            <h5 class="fw-bold">
+                                Free
+                            </h5>
+
+                            <h3 class="mb-3">
+                                $0
+                            </h3>
+
+                            <ul class="list-unstyled small mt-3 mb-4 text-start">
+
+                                <li class="mb-2">
+                                    ✔ 5 palettes
+                                </li>
+
+                                <li class="mb-2">
+                                    ✔ Basic gradients
+                                </li>
+
+                                <li class="mb-2 text-danger">
+                                    ❌ No exports
+                                </li>
+
+                            </ul>
+
+                            <button class="btn btn-outline-secondary w-100"
+                                    disabled>
+
+                                Current Plan
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <!-- PRO -->
+                    <div class="col-md-5">
+
+                        <div class="plan-card highlight h-100 p-4 rounded-4 border border-dark position-relative shadow-sm">
+
+                            <!-- POPULAR -->
+                            <div class="badge bg-dark mb-3">
+                                Most Popular
+                            </div>
+
+                            <h6 class="fw-bold">
+                                Pro
+                            </h6>
+
+                            <h2 class="mb-3">
+                                $5
+                                <span class="small text-muted">/mo</span>
+                            </h2>
+
+                            <ul class="list-unstyled small mt-3 mb-4 text-start">
+
+                                <li class="mb-2">
+                                    ✔ Unlimited palettes
+                                </li>
+
+                                <li class="mb-2">
+                                    ✔ Radial gradients
+                                </li>
+
+                                <li class="mb-2">
+                                    ✔ CSS + PNG export
+                                </li>
+
+                                <li class="mb-2">
+                                    ✔ Future premium tools
+                                </li>
+
+                            </ul>
+
+                            <!-- CTA -->
+                            <a href="/create-checkout-session"
+                               class="btn btn-dark w-100 py-2 fw-semibold focus-target">
+
+                                Upgrade Now
+
+                            </a>
+
+                            <!-- TRUST -->
+                            <small class="text-muted d-block mt-3">
+                                Cancel anytime • No hidden fees
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- CLOSE -->
+                <button class="btn btn-link mt-4 text-decoration-none"
+                        data-bs-dismiss="modal">
+
+                    Maybe later
+
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <!-- PRO (MAIN FOCUS) -->
-    <div class="col-md-4">
-      <div class="plan-card highlight scale-up">
-
-        <div class="badge bg-dark mb-2">Most Popular</div>
-
-        <h6>Pro</h6>
-        <h2>$5<span class="small">/mo</span></h2>
-
-        <ul class="list-unstyled small mt-3 mb-3 text-start">
-          <li>✔ Unlimited palettes</li>
-          <li>✔ Radial gradients</li>
-          <li>✔ CSS + PNG export</li>
-          <li>✔ Future premium tools</li>
-        </ul>
-
-        <!-- 🔥 MAIN CTA -->
-        <a href="/create-checkout-session"
-           class="btn btn-dark w-100 focus-target cta-btn">
-           Upgrade Now
-        </a>
-
-        <!-- 💎 RISK REDUCTION -->
-        <small class="text-muted d-block mt-2">
-          Cancel anytime • No hidden fees
-        </small>
-
-      </div>
-    </div>
-
-  </div>
-
-  <!-- 👇 SOFT EXIT -->
-  <button class="btn btn-link mt-4 close-btn"
-          data-bs-dismiss="modal"
-          onclick="document.activeElement.blur()">
-    Maybe later
-  </button>
-
-</div>	
-	
 </div>
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
 
@@ -578,9 +645,9 @@
 <!-- SCRIPTS -->
 <!-- ===================================== -->
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>  const userPlan = "{{ user_plan }}"; </script>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+
 
 <script>
     const csrfToken = document
@@ -590,6 +657,6 @@
    
 	
 </script>
-
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
