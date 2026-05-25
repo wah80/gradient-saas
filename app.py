@@ -27,6 +27,16 @@ csrf = CSRFProtect(app)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 DOMAIN = os.environ.get("DOMAIN", "http://127.0.0.1:5000")
 
+import logging
+
+logging.basicConfig(
+    filename='app.log',
+    level=logging.ERROR
+)
+
+
+app.logger.error("Stripe webhook failed")
+
 
 def get_db_connection():
     database_url = os.environ.get("DATABASE_URL")
@@ -678,7 +688,7 @@ def save_palette():
         "status": "error",
         "message": "Free plan limit reached. Upgrade to Pro."
     })
-    if user_plan == "free" and data["gradient_type"] == "radial":
+    if user_plan and user_plan.lower() == "free" and data.get("gradient_type") == "radial":
         conn.close()
         return jsonify({"status": "error","message": "Radial gradients are Pro feature."}), 403
     colors = data.get("colors")
@@ -801,7 +811,7 @@ def update_palette(palette_id):
         (session["user_id"],)
     )
     user_plan = cursor.fetchone()[0]
-    if user_plan == "free" and data.get("gradient_type") == "radial":
+    if user_plan and user_plan.lower() == "free" and data.get("gradient_type") == "radial":
         conn.close()
         return jsonify({
             "status": "error",
@@ -827,7 +837,8 @@ def update_palette(palette_id):
     
     conn.commit()
     conn.close()
-    
+    print("PLAN:", user_plan)
+    print("TYPE:", data.get("gradient_type"))
     return jsonify({"status": "success"})
 
 

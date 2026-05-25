@@ -46,8 +46,8 @@ function addColor(defaultColor="#ff0240"){
 
         let container = document.getElementById("colorInputs");
 
-        if(container.children.length <= 1){
-            alert("At least one color required!");
+        if(container.children.length <= 2){
+           showToast("At least Two color required!", "danger");
             return;
         }
 
@@ -321,6 +321,10 @@ function savePalette() {
         showToast("Generate palette and enter name", "danger");
         return;
     }
+	if(currentPalette.length < 2){
+		showToast("Add at least 2 colors", "warning");
+		return;
+	}
 
     let data = {
         name: name,
@@ -380,7 +384,10 @@ fetch(url, {
                 : "Palette saved successfully!",
             "success"
         );
-
+		gtag('event', 'palette_saved', {
+		gradient_type: gradientType
+		});
+		
         editingPaletteId = null;
 
         setTimeout(() => location.reload(), 800);
@@ -404,7 +411,11 @@ fetch(url, {
 function copyCSS(){
     let text = document.getElementById("cssCode").innerText;
     navigator.clipboard.writeText(text);
-    alert("CSS Code Copied!");
+    showToast("CSS Code Copied!");
+	// Analytics
+    if(typeof gtag !== "undefined"){
+        gtag('event', 'copy_css');
+    }
 }
 
 function downloadCSS(){
@@ -528,14 +539,15 @@ function exportPNG(){
     link.download = "gradient.png";
     link.href = canvas.toDataURL();
     link.click();
+	if(typeof gtag !== "undefined"){
+        gtag('event', 'copy_css');
+    }
 }
 
 
+document.addEventListener("DOMContentLoaded", () => {
 
-
-window.onload = function () {
-	
-	const modalEl =
+    const modalEl =
         document.getElementById("upgradeModal");
 
     if(modalEl){
@@ -543,6 +555,11 @@ window.onload = function () {
             bootstrap.Modal.getOrCreateInstance(modalEl);
     }
 	
+});
+
+window.onload = function () {
+	
+		
     if (!safeGet("angleSlider")) return;
 
     loadSettings();
@@ -820,13 +837,7 @@ function showUpgradeInline(){
 
 function showUpgradePopup(message = null){
 
-    const modalEl =
-        document.getElementById("upgradeModal");
-
-    if(!modalEl){
-        console.error("Modal element missing");
-        return;
-    }
+    if(!upgradeModal) return;
 
     const msg =
         document.getElementById("upgradeMessage");
@@ -835,11 +846,26 @@ function showUpgradePopup(message = null){
         msg.innerText = message;
     }
 
-    const modal =
-        bootstrap.Modal.getOrCreateInstance(modalEl);
-
-    modal.show();
+    upgradeModal.show();
+	 // Analytics
+    if(typeof gtag !== "undefined"){
+        gtag('event', 'upgrade_popup_open', {
+            plan: userPlan
+        });
+	}
 }
+
+function trackUpgradeClick(){
+
+    if(typeof gtag !== "undefined"){
+
+        gtag('event', 'upgrade_click', {
+            source: 'upgrade_modal'
+        });
+
+    }
+}
+
 
 setInterval(() => {
     if (!editingPaletteId) {
