@@ -314,10 +314,18 @@ function reverseColors(){
 
 // Save Palette
 function savePalette() {
-
+	
     let name = document.getElementById("paletteName").value.trim();
 
-    if (!name || currentPalette.length === 0) {
+    const btn = document.getElementById("saveBtn");
+
+    btn.disabled = true;
+    btn.innerHTML =`
+        <span class="spinner-border spinner-border-sm"></span>
+        Saving...
+		`;
+		
+	if (!name || currentPalette.length === 0) {
         showToast("Generate palette and enter name", "danger");
         return;
     }
@@ -400,11 +408,14 @@ fetch(url, {
 
 })
 
-.catch(err => {
+	.catch(err => {
     console.error(err);
     showToast("Something went wrong", "danger");
-});
-   
+	});
+   finally {
+        btn.disabled = false;
+        btn.innerHTML = "Save Palette";
+    }
 }
 
 
@@ -490,11 +501,13 @@ function exportPNG(){
     let canvas = document.createElement("canvas");
     canvas.width = 800;
     canvas.height = 400;
-
-    let ctx = canvas.getContext("2d");
+	
+	
+    
+	let ctx = canvas.getContext("2d");
 
     let gradient;
-
+	
     if(gradientType === "linear"){
 
         let angleRad = currentAngle * Math.PI / 180;
@@ -539,6 +552,7 @@ function exportPNG(){
     link.download = "gradient.png";
     link.href = canvas.toDataURL();
     link.click();
+	
 	if(typeof gtag !== "undefined"){
         gtag('event', 'copy_css');
     }
