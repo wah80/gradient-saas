@@ -349,7 +349,7 @@ function savePalette() {
     let url = editingPaletteId
     ? `/update_palette/${editingPaletteId}`
     : "/save_palette";
-
+try {
 fetch(url, {
     method: "POST",
     headers: {
@@ -411,8 +411,8 @@ fetch(url, {
 	.catch(err => {
     console.error(err);
     showToast("Something went wrong", "danger");
-	});
-   finally {
+});}
+    finally {
         btn.disabled = false;
         btn.innerHTML = "Save Palette";
     }
