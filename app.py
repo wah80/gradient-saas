@@ -1619,7 +1619,8 @@ def track_upgrade():
     conn.close()
 
     return "", 204       
-app.errorhandler(404)
+
+@app.errorhandler(404)
 def not_found(error):
     return render_template("404.html"), 404
     
@@ -1630,7 +1631,10 @@ def server_error(error):
 @app.route("/terms")
 def terms():
     return render_template("terms.html")   
-    
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")    
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SECURE=True,  # True when using HTTPS
