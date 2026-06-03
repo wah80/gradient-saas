@@ -865,7 +865,9 @@ function trackUpgradeClick(){
 
     }
 }
-
+window.addEventListener("load", () => {
+    document.getElementById("pageLoader").style.display = "none";
+});
 
 setInterval(() => {
     if (!editingPaletteId) {
