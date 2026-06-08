@@ -832,8 +832,45 @@ body.modal-open{
     margin-top:50px;
 }
 
+/* =========================
+   support, contact, refund policy
+========================= */
+
 .site-footer a{
     color:#94a3b8;
     margin:0 10px;
     text-decoration:none;
+}
+
+.legal-page{
+    max-width:900px;
+    margin:60px auto;
+    padding:40px;
+    background:#111827;
+    border:1px solid #1f2937;
+    border-radius:20px;
+    color:#fff;
+}
+
+.legal-page h1{
+    margin-bottom:25px;
+    font-weight:700;
+}
+
+.legal-page h4{
+    margin-top:25px;
+    margin-bottom:10px;
+}
+
+.contact-card,
+.faq-item{
+    background:#1f2937;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+.legal-page p{
+    color:#cbd5e1;
+    line-height:1.7;
 }

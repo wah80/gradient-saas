@@ -1635,6 +1635,20 @@ def terms():
 @app.route("/privacy")
 def privacy():
     return render_template("privacy.html")    
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+    
+@app.route("/support")
+def support():
+    return render_template("support.html")
+    
+@app.route("/refund-policy")
+def refund_policy():
+    return render_template("refund_policy.html")
+
+    
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SECURE=True,  # True when using HTTPS
